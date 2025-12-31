@@ -60,11 +60,10 @@ test_that("cache functions work correctly", {
 })
 
 test_that("get_enrollment_urls returns correct URLs", {
-  # SRC Current format (2024+)
+  # SRC Current format (2024+) - uses combined Student_Enrollment file
   urls_2024 <- get_enrollment_urls(2024)
   expect_true(any(grepl("KYRC24", urls_2024)))
-  expect_true(any(grepl("Primary", urls_2024)))
-  expect_true(any(grepl("Secondary", urls_2024)))
+  expect_true(any(grepl("Student_Enrollment", urls_2024)))
 
   # SRC Current format (2020-2023)
   urls_2023 <- get_enrollment_urls(2023)

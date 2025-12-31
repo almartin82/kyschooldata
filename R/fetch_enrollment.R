@@ -13,10 +13,11 @@
 #' Education via the School Report Card (SRC) datasets or SAAR data.
 #'
 #' @param end_year A school year. Year is the end of the academic year - eg 2023-24
-#'   school year is year '2024'. Valid values are 1997-2025:
+#'   school year is year '2024'. Valid values are 1997-2024:
 #'   - 1997-2011: SAAR data (district-level only)
 #'   - 2012-2019: SRC Historical datasets
-#'   - 2020-2025: SRC Current format datasets
+#'   - 2020-2024: SRC Current format datasets
+#'   Note: 2025 data not yet available from KDE as of Dec 2025.
 #' @param tidy If TRUE (default), returns data in long (tidy) format with subgroup
 #'   column. If FALSE, returns wide format.
 #' @param use_cache If TRUE (default), uses locally cached data when available.
@@ -43,8 +44,8 @@
 fetch_enr <- function(end_year, tidy = TRUE, use_cache = TRUE) {
 
   # Validate year
-  if (end_year < 1997 || end_year > 2025) {
-    stop("end_year must be between 1997 and 2025. Use get_available_years() to see data availability.")
+  if (end_year < 1997 || end_year > 2024) {
+    stop("end_year must be between 1997 and 2024. Use get_available_years() to see data availability.")
   }
 
   # Determine cache type based on tidy parameter
@@ -99,10 +100,10 @@ fetch_enr <- function(end_year, tidy = TRUE, use_cache = TRUE) {
 fetch_enr_multi <- function(end_years, tidy = TRUE, use_cache = TRUE) {
 
   # Validate years
-  invalid_years <- end_years[end_years < 1997 | end_years > 2025]
+  invalid_years <- end_years[end_years < 1997 | end_years > 2024]
   if (length(invalid_years) > 0) {
     stop(paste("Invalid years:", paste(invalid_years, collapse = ", "),
-               "\nend_year must be between 1997 and 2025"))
+               "\nend_year must be between 1997 and 2024"))
   }
 
   # Fetch each year

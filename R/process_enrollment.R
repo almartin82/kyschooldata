@@ -38,13 +38,19 @@ process_enr <- function(raw_data, end_year) {
 
 #' Process SRC Current Format data (2020+)
 #'
-#' @param raw_data List with primary and secondary data frames
+#' @param raw_data List with primary and secondary data frames (or combined)
 #' @param end_year School year end
 #' @return Processed data frame
 #' @keywords internal
 process_src_current <- function(raw_data, end_year) {
 
   results <- list()
+
+  # Process combined enrollment if available (2024+ format)
+  if (!is.null(raw_data$combined) && nrow(raw_data$combined) > 0) {
+    combined_processed <- process_src_enrollment_df(raw_data$combined, end_year, "combined")
+    results$combined <- combined_processed
+  }
 
   # Process primary enrollment if available
   if (!is.null(raw_data$primary) && nrow(raw_data$primary) > 0) {

@@ -15,10 +15,13 @@
 #   - CSV files with school-level enrollment
 #   - URL: education.ky.gov/Open-House/data/HistoricalDatasets/
 #
-# Era 3: SRC Current Format (2020-2025)
+# Era 3: SRC Current Format (2020-2024)
 #   - Open House SRC Datasets
-#   - CSV files with primary/secondary enrollment
+#   - CSV files with primary/secondary enrollment (2020-2023)
+#   - CSV files with KYRC naming convention (2024+)
 #   - URL: education.ky.gov/Open-House/data/HistoricalDatasets/
+#
+# Note: 2025 data not yet available as of Dec 2025
 #
 # ==============================================================================
 
@@ -33,8 +36,8 @@
 get_raw_enr <- function(end_year) {
 
   # Validate year
-  if (end_year < 1997 || end_year > 2025) {
-    stop("end_year must be between 1997 and 2025. Use get_available_years() to see data availability.")
+  if (end_year < 1997 || end_year > 2024) {
+    stop("end_year must be between 1997 and 2024. Use get_available_years() to see data availability.")
   }
 
   message(paste("Downloading KDE enrollment data for", end_year, "..."))
@@ -58,8 +61,9 @@ get_raw_enr <- function(end_year) {
 #' Download SRC Current Format data (2020+)
 #'
 #' Downloads primary and secondary enrollment CSV files from Open House.
+#' For 2024+, KDE uses a combined Student_Enrollment file with KYRC naming.
 #'
-#' @param end_year School year end (2020-2025)
+#' @param end_year School year end (2020-2024)
 #' @return List with primary and secondary data frames
 #' @keywords internal
 download_src_current <- function(end_year) {
@@ -68,24 +72,64 @@ download_src_current <- function(end_year) {
 
   base_url <- "https://www.education.ky.gov/Open-House/data/HistoricalDatasets/"
 
-  # For 2024+, KDE uses a different naming pattern: KYRC24_OVW_...
+  # For 2024+, KDE uses KYRC24_OVW_Student_Enrollment.csv (combined file)
   if (end_year >= 2024) {
     year_suffix <- substr(as.character(end_year), 3, 4)
+
+    # Try the combined Student_Enrollment file first (confirmed to exist for 2024)
+    combined_url <- paste0(base_url, "KYRC", year_suffix, "_OVW_Student_Enrollment.csv")
+
+    message("    Downloading combined enrollment (KYRC format)...")
+    combined_df <- tryCatch({
+      download_kde_csv(combined_url, end_year, "combined")
+    }, error = function(e) {
+      message("    Combined file not found, trying primary/secondary...")
+      NULL
+    })
+
+    if (!is.null(combined_df)) {
+      return(list(
+        combined = combined_df,
+        end_year = end_year,
+        era = "src_current"
+      ))
+    }
+
+    # Fallback to separate primary/secondary files
     primary_url <- paste0(base_url, "KYRC", year_suffix, "_OVW_Primary_Enrollment.csv")
     secondary_url <- paste0(base_url, "KYRC", year_suffix, "_OVW_Secondary_Enrollment.csv")
+
   } else {
-    # 2020-2023 use simpler naming
+    # 2020-2023 use simpler naming: primary_enrollment_YYYY.csv
     primary_url <- paste0(base_url, "primary_enrollment_", end_year, ".csv")
     secondary_url <- paste0(base_url, "secondary_enrollment_", end_year, ".csv")
   }
 
   # Download primary enrollment
+  primary_df <- NULL
   message("    Downloading primary enrollment...")
-  primary_df <- download_kde_csv(primary_url, end_year, "primary")
+  primary_df <- tryCatch({
+    download_kde_csv(primary_url, end_year, "primary")
+  }, error = function(e) {
+    message("    Primary enrollment not available: ", e$message)
+    NULL
+  })
 
   # Download secondary enrollment
+  secondary_df <- NULL
   message("    Downloading secondary enrollment...")
-  secondary_df <- download_kde_csv(secondary_url, end_year, "secondary")
+  secondary_df <- tryCatch({
+    download_kde_csv(secondary_url, end_year, "secondary")
+  }, error = function(e) {
+    message("    Secondary enrollment not available: ", e$message)
+    NULL
+  })
+
+  # Check if we got any data
+  if (is.null(primary_df) && is.null(secondary_df)) {
+    stop(paste("No enrollment data found for year", end_year,
+               "\nTried URLs:", primary_url, "and", secondary_url))
+  }
 
   list(
     primary = primary_df,
@@ -365,28 +409,38 @@ download_kde_csv <- function(url, end_year, file_type) {
 #'
 #' @param end_year School year end
 #' @return Character vector of URLs
-#' @keywords internal
+#' @export
+#' @examples
+#' get_enrollment_urls(2024)  # KYRC24 format
+#' get_enrollment_urls(2023)  # primary/secondary format
+#' get_enrollment_urls(2005)  # SAAR format
 get_enrollment_urls <- function(end_year) {
 
   base_url <- "https://www.education.ky.gov/Open-House/data/HistoricalDatasets/"
 
   if (end_year >= 2024) {
+    # 2024+ uses KYRC naming with combined Student_Enrollment file
     year_suffix <- substr(as.character(end_year), 3, 4)
     c(
+      paste0(base_url, "KYRC", year_suffix, "_OVW_Student_Enrollment.csv"),
       paste0(base_url, "KYRC", year_suffix, "_OVW_Primary_Enrollment.csv"),
       paste0(base_url, "KYRC", year_suffix, "_OVW_Secondary_Enrollment.csv")
     )
   } else if (end_year >= 2020) {
+    # 2020-2023 use simpler naming
     c(
       paste0(base_url, "primary_enrollment_", end_year, ".csv"),
       paste0(base_url, "secondary_enrollment_", end_year, ".csv")
     )
   } else if (end_year >= 2012) {
+    # 2012-2019 may have SRC files, fall back to SAAR
     c(
       paste0(base_url, "primary_enrollment_", end_year, ".csv"),
-      paste0(base_url, "secondary_enrollment_", end_year, ".csv")
+      paste0(base_url, "secondary_enrollment_", end_year, ".csv"),
+      "https://education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
     )
   } else {
+    # Pre-2012 SAAR only
     "https://education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
   }
 }

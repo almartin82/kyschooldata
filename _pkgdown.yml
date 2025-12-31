@@ -3,6 +3,11 @@ url: https://almartin82.github.io/kyschooldata/
 template:
   bootstrap: 5
 
+home:
+  links:
+  - text: "Part of the 50 State Schooldata Family"
+    href: https://github.com/almartin82/njschooldata
+
 navbar:
   structure:
     left:  [intro, reference, articles]
