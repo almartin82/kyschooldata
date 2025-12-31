@@ -1,0 +1,41 @@
+url: https://almartin82.github.io/kyschooldata/
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left:  [intro, reference, articles]
+    right: [search, github]
+
+reference:
+- title: Fetch Data
+  desc: Functions for downloading enrollment data
+  contents:
+  - fetch_enr
+  - fetch_enr_multi
+  - get_available_years
+
+- title: Transform Data
+  desc: Functions for transforming data formats
+  contents:
+  - tidy_enr
+  - id_enr_aggs
+  - enr_grade_aggs
+
+- title: Cache Management
+  desc: Functions for managing cached data
+  contents:
+  - cache_status
+  - clear_cache
+
+- title: Utilities
+  desc: Helper functions
+  contents:
+  - starts_with("%")
+
+articles:
+- title: Getting Started
+  navbar: ~
+  contents:
+  - kyschooldata

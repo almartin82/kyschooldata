@@ -1,0 +1,25 @@
+# R package files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Build files
+docs/
+inst/doc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+__pycache__/
+
+# Cache
+*.rds
