@@ -1,13 +1,10 @@
 Package: kyschooldata
-Title: Fetch and Process Kentucky School Data
+Title: Kentucky School Data
 Version: 0.1.0
 Authors@R:
     person("Al", "Martin", , "almartin@example.com", role = c("aut", "cre"))
-Description: Downloads and processes school data from the Kentucky Department
-    of Education (KDE). Provides functions for fetching enrollment data from
-    the School Report Card (SRC) datasets (2012-2024) and SAAR (Superintendent's
-    Annual Attendance Report) data (1997-2019), transforming it into tidy format
-    for analysis. Supports school-level data for 2012+, district-level for 1997+.
+Description: A simple, consistent interface for accessing Kentucky
+    school data in R.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
