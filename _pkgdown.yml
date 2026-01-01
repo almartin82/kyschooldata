@@ -20,6 +20,7 @@ reference:
   - fetch_enr
   - fetch_enr_multi
   - get_available_years
+  - get_enrollment_urls
 
 - title: Transform Data
   desc: Functions for transforming data formats
@@ -33,9 +34,3 @@ reference:
   contents:
   - cache_status
   - clear_cache
-
-articles:
-- title: Getting Started
-  navbar: ~
-  contents:
-  - kyschooldata
