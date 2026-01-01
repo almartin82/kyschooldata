@@ -4,6 +4,7 @@
 [![R-CMD-check](https://github.com/almartin82/kyschooldata/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/almartin82/kyschooldata/actions/workflows/R-CMD-check.yaml)
 [![Python Tests](https://github.com/almartin82/kyschooldata/actions/workflows/python-test.yaml/badge.svg)](https://github.com/almartin82/kyschooldata/actions/workflows/python-test.yaml)
 [![pkgdown](https://github.com/almartin82/kyschooldata/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/almartin82/kyschooldata/actions/workflows/pkgdown.yaml)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 **[Documentation](https://almartin82.github.io/kyschooldata/)** | **[Getting Started](https://almartin82.github.io/kyschooldata/articles/quickstart.html)**
