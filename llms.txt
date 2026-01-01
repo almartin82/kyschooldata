@@ -4,8 +4,8 @@
 **[Getting
 Started](https://almartin82.github.io/kyschooldata/articles/quickstart.html)**
 
-Fetch and analyze Kentucky public school enrollment data from the
-Kentucky Department of Education (KDE).
+Fetch and analyze Kentucky school enrollment data from the Kentucky
+Department of Education (KDE) in R or Python.
 
 ## What can you find with kyschooldata?
 
@@ -202,6 +202,8 @@ remotes::install_github("almartin82/kyschooldata")
 
 ## Quick start
 
+### R
+
 ``` r
 library(kyschooldata)
 library(dplyr)
@@ -231,6 +233,38 @@ enr_2024 %>%
          subgroup %in% c("white", "black", "hispanic")) %>%
   group_by(district_name, subgroup) %>%
   summarize(n = sum(n_students, na.rm = TRUE))
+```
+
+### Python
+
+``` python
+import pykyschooldata as ky
+
+# Check available years
+years = ky.get_available_years()
+print(f"Data available from {years['min_year']} to {years['max_year']}")
+
+# Fetch one year
+enr_2024 = ky.fetch_enr(2024)
+
+# Fetch multiple years
+enr_recent = ky.fetch_enr_multi([2020, 2021, 2022, 2023, 2024])
+
+# State totals
+state_total = enr_2024[
+    (enr_2024['is_state'] == True) &
+    (enr_2024['subgroup'] == 'total_enrollment') &
+    (enr_2024['grade_level'] == 'TOTAL')
+]
+print(state_total[['end_year', 'n_students']])
+
+# District breakdown
+districts = enr_2024[
+    (enr_2024['is_district'] == True) &
+    (enr_2024['subgroup'] == 'total_enrollment') &
+    (enr_2024['grade_level'] == 'TOTAL')
+].sort_values('n_students', ascending=False)
+print(districts[['district_name', 'n_students']].head(10))
 ```
 
 ## Data availability
