@@ -2,19 +2,7 @@
 # Utility Functions
 # ==============================================================================
 
-#' Pipe operator
-#'
-#' See \code{dplyr::\link[dplyr:reexports]{\%>\%}} for details.
-#'
-#' @name %>%
-#' @rdname pipe
-#' @keywords internal
-#' @export
-#' @importFrom dplyr %>%
-#' @usage lhs \%>\% rhs
-#' @param lhs A value or the magrittr placeholder.
-#' @param rhs A function call using the magrittr semantics.
-#' @return The result of calling `rhs(lhs)`.
+#' @importFrom rlang .data
 NULL
 
 
@@ -93,34 +81,9 @@ saar_year_to_end_year <- function(saar_year) {
 #' @examples
 #' get_available_years()
 get_available_years <- function() {
-  message("Kentucky enrollment data availability:")
-  message("")
-  message("Era 1: SAAR Data (1997-2019)")
-  message("  - Source: SAAR Ethnic Membership Reports")
-  message("  - Aggregation: District-level only")
-  message("  - Demographics: Race/ethnicity")
-  message("  - File: 1996-2019 SAAR Summary ReportsADA.xlsx")
-  message("")
-  message("Era 2: SRC Historical Datasets (2012-2019)")
-  message("  - Source: School Report Card Historical Datasets")
-  message("  - Aggregation: School and District level")
-  message("  - Demographics: Race/ethnicity, gender, special populations")
-  message("")
-  message("Era 3: SRC Current Format (2020-2024)")
-  message("  - Source: Open House SRC Datasets")
-  message("  - Aggregation: School and District level")
-  message("  - Demographics: Race/ethnicity, gender, special populations, grade levels")
-  message("  - 2020-2023: primary_enrollment_YYYY.csv, secondary_enrollment_YYYY.csv")
-  message("  - 2024: KYRC24_OVW_Student_Enrollment.csv")
-  message("")
-  message("Note: 2025 data not yet available from KDE as of Dec 2025.")
-  message("Note: Pre-1997 data not available from KDE.")
-  message("")
-  message("Use fetch_enr(year) where year is 1997-2024")
-
-  invisible(list(
-    saar = 1997:2019,
-    src_historical = 2012:2019,
-    src_current = 2020:2024
-  ))
+  list(
+    min_year = 1997,
+    max_year = 2024,
+    description = "Kentucky enrollment data from KDE (1997-2024)"
+  )
 }
