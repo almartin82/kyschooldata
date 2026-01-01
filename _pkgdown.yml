@@ -34,11 +34,6 @@ reference:
   - cache_status
   - clear_cache
 
-- title: Utilities
-  desc: Helper functions
-  contents:
-  - starts_with("%")
-
 articles:
 - title: Getting Started
   navbar: ~
