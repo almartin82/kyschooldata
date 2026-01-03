@@ -48,10 +48,6 @@ enr %>%
   select(end_year, n_students)
 ```
 
-![Enrollment decline](reference/figures/enrollment-decline.png)
-
-Enrollment decline
-
 ------------------------------------------------------------------------
 
 ### 3. Eastern Kentucky is emptying out
@@ -68,10 +64,6 @@ fetch_enr_multi(2000:2024) %>%
   select(end_year, district_name, n_students)
 ```
 
-![Eastern Kentucky decline](reference/figures/appalachia-decline.png)
-
-Eastern Kentucky decline
-
 ------------------------------------------------------------------------
 
 ### 4. The Hispanic population has quadrupled
@@ -84,10 +76,6 @@ enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "hispanic") %>%
   select(end_year, n_students, pct)
 ```
-
-![Hispanic growth](reference/figures/hispanic-growth.png)
-
-Hispanic growth
 
 ------------------------------------------------------------------------
 
@@ -168,10 +156,6 @@ enr %>%
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
 ```
-
-![Boone County growth](reference/figures/boone-county.png)
-
-Boone County growth
 
 ------------------------------------------------------------------------
 
