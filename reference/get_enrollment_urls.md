@@ -29,5 +29,5 @@ get_enrollment_urls(2023)  # primary/secondary format
 #> [1] "https://www.education.ky.gov/Open-House/data/HistoricalDatasets/primary_enrollment_2023.csv"  
 #> [2] "https://www.education.ky.gov/Open-House/data/HistoricalDatasets/secondary_enrollment_2023.csv"
 get_enrollment_urls(2005)  # SAAR format
-#> [1] "https://education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
+#> [1] "https://www.education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
 ```
