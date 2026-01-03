@@ -8,22 +8,28 @@
 # Era 1: SAAR Data (1997-2019)
 #   - Superintendent's Annual Attendance Report
 #   - Excel files with ethnic membership data by district
-#   - URL: education.ky.gov/districts/enrol/Documents/
+#   - URL: www.education.ky.gov/districts/enrol/Documents/
 #
 # Era 2: SRC Historical Datasets (2012-2019)
 #   - School Report Card Historical Datasets
 #   - CSV files with school-level enrollment
-#   - URL: education.ky.gov/Open-House/data/HistoricalDatasets/
+#   - URL: www.education.ky.gov/Open-House/data/HistoricalDatasets/
 #
 # Era 3: SRC Current Format (2020-2024)
 #   - Open House SRC Datasets
 #   - CSV files with primary/secondary enrollment (2020-2023)
 #   - CSV files with KYRC naming convention (2024+)
-#   - URL: education.ky.gov/Open-House/data/HistoricalDatasets/
+#   - URL: www.education.ky.gov/Open-House/data/HistoricalDatasets/
+#
+# IMPORTANT: All URLs MUST include "www." prefix - KDE returns 403 without it.
+# IMPORTANT: All requests MUST include a browser-like User-Agent header.
 #
 # Note: 2025 data not yet available as of Dec 2025
 #
 # ==============================================================================
+
+# User-Agent string for KDE downloads (required to avoid 403 errors)
+KDE_USER_AGENT <- "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 #' Download raw enrollment data from KDE
 #'
@@ -231,7 +237,8 @@ download_saar_data <- function(end_year) {
   }
 
   # The 1996-2019 SAAR Summary Reports Excel file
-  saar_url <- "https://education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
+  # IMPORTANT: Must use www. prefix or KDE returns 403
+  saar_url <- "https://www.education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
 
   # Create temp file
   tname <- tempfile(
@@ -246,6 +253,7 @@ download_saar_data <- function(end_year) {
       saar_url,
       httr::write_disk(tname, overwrite = TRUE),
       httr::timeout(300),
+      httr::user_agent(KDE_USER_AGENT),
       httr::config(ssl_verifypeer = FALSE)  # KDE site has cert issues
     )
 
@@ -311,7 +319,8 @@ download_saar_data <- function(end_year) {
 download_saar_single_year <- function(end_year) {
 
   # Individual year reports (2016-2019)
-  base_url <- "https://education.ky.gov/districts/enrol/Documents/"
+  # IMPORTANT: Must use www. prefix or KDE returns 403
+  base_url <- "https://www.education.ky.gov/districts/enrol/Documents/"
   saar_url <- paste0(base_url, end_year, " SAAR Summary Report.xlsx")
 
   tname <- tempfile(
@@ -325,6 +334,7 @@ download_saar_single_year <- function(end_year) {
       saar_url,
       httr::write_disk(tname, overwrite = TRUE),
       httr::timeout(120),
+      httr::user_agent(KDE_USER_AGENT),
       httr::config(ssl_verifypeer = FALSE)
     )
 
@@ -363,6 +373,7 @@ download_kde_csv <- function(url, end_year, file_type) {
       url,
       httr::write_disk(tname, overwrite = TRUE),
       httr::timeout(180),
+      httr::user_agent(KDE_USER_AGENT),
       httr::config(ssl_verifypeer = FALSE)  # KDE site has cert issues
     )
 
@@ -437,10 +448,10 @@ get_enrollment_urls <- function(end_year) {
     c(
       paste0(base_url, "primary_enrollment_", end_year, ".csv"),
       paste0(base_url, "secondary_enrollment_", end_year, ".csv"),
-      "https://education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
+      "https://www.education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
     )
   } else {
     # Pre-2012 SAAR only
-    "https://education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
+    "https://www.education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx"
   }
 }
