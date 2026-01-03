@@ -7,7 +7,7 @@
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-**[Documentation](https://almartin82.github.io/kyschooldata/)** | **[Getting Started](https://almartin82.github.io/kyschooldata/articles/quickstart.html)**
+**[Documentation](https://almartin82.github.io/kyschooldata/)** | **[Getting Started](https://almartin82.github.io/kyschooldata/articles/quickstart.html)** | **[Enrollment Trends](https://almartin82.github.io/kyschooldata/articles/enrollment-trends.html)**
 
 Fetch and analyze Kentucky school enrollment data from the Kentucky Department of Education (KDE) in R or Python.
 
@@ -48,7 +48,7 @@ enr %>%
   select(end_year, n_students)
 ```
 
-![Enrollment decline](man/figures/enrollment-decline.png)
+See the [Enrollment Trends vignette](https://almartin82.github.io/kyschooldata/articles/enrollment-trends.html) for visualizations.
 
 ---
 
@@ -65,8 +65,6 @@ fetch_enr_multi(2000:2024) %>%
   select(end_year, district_name, n_students)
 ```
 
-![Eastern Kentucky decline](man/figures/appalachia-decline.png)
-
 ---
 
 ### 4. The Hispanic population has quadrupled
@@ -78,8 +76,6 @@ enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "hispanic") %>%
   select(end_year, n_students, pct)
 ```
-
-![Hispanic growth](man/figures/hispanic-growth.png)
 
 ---
 
@@ -154,8 +150,6 @@ enr %>%
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
 ```
-
-![Boone County growth](man/figures/boone-county.png)
 
 ---
 
