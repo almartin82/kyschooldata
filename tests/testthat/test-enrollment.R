@@ -39,9 +39,10 @@ test_that("fetch_enr validates year parameter", {
 test_that("get_available_years returns year ranges", {
   result <- get_available_years()
   expect_type(result, "list")
-  expect_true("saar" %in% names(result))
-  expect_true("src_historical" %in% names(result))
-  expect_true("src_current" %in% names(result))
+  expect_true("min_year" %in% names(result))
+  expect_true("max_year" %in% names(result))
+  expect_true(result$min_year >= 1990 & result$min_year <= 2030)
+  expect_true(result$max_year >= 1990 & result$max_year <= 2030)
 })
 
 test_that("get_cache_dir returns valid path", {

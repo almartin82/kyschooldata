@@ -4,6 +4,45 @@
 
 ---
 
+## Kentucky DOE Data Sources (Verified January 2026)
+
+### CRITICAL: URL Requirements
+
+**All KDE URLs MUST:**
+1. Use `https://www.education.ky.gov/` (with `www.` prefix) — returns 403 without it
+2. Include a browser-like User-Agent header in HTTP requests
+
+### Data Source Locations
+
+| Era | Years | Data Files | Base URL |
+|-----|-------|------------|----------|
+| SRC Current | 2024+ | `KYRC24_OVW_Student_Enrollment.csv` | `www.education.ky.gov/Open-House/data/HistoricalDatasets/` |
+| SRC Current | 2020-2023 | `primary_enrollment_YYYY.csv`, `secondary_enrollment_YYYY.csv` | `www.education.ky.gov/Open-House/data/HistoricalDatasets/` |
+| SAAR | 1997-2019 | `1996-2019 SAAR Summary ReportsADA.xlsx` | `www.education.ky.gov/districts/enrol/Documents/` |
+
+### Verified URLs (HTTP 200 as of Jan 2026)
+
+**SRC Current Format:**
+- `https://www.education.ky.gov/Open-House/data/HistoricalDatasets/KYRC24_OVW_Student_Enrollment.csv`
+- `https://www.education.ky.gov/Open-House/data/HistoricalDatasets/primary_enrollment_2023.csv`
+- `https://www.education.ky.gov/Open-House/data/HistoricalDatasets/secondary_enrollment_2023.csv`
+
+**SAAR Historical:**
+- `https://www.education.ky.gov/districts/enrol/Documents/1996-2019%20SAAR%20Summary%20ReportsADA.xlsx`
+
+### Pages Checked
+
+1. [Historical SAAR Data](https://www.education.ky.gov/districts/enrol/Pages/Historical-SAAR-Data.aspx) - SAAR Excel files
+2. [Historical SRC Datasets](https://www.education.ky.gov/Open-House/data/Pages/Historical-SRC-Datasets.aspx) - SRC CSV files
+3. [Student Enrollment Page](https://www.education.ky.gov/districts/enrol/Pages/default.aspx) - Main enrollment data landing
+
+### Known Issues Fixed
+
+1. **403 Forbidden** - Fixed by adding `www.` prefix to all URLs
+2. **403 with User-Agent** - Fixed by adding browser-like User-Agent header to httr requests
+
+---
+
 
 # Claude Code Instructions
 
