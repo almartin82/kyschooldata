@@ -1,0 +1,242 @@
+---
+title: "Getting Started with kyschooldata"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with kyschooldata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+## Overview
+
+The `kyschooldata` package provides tools for fetching and analyzing Kentucky school enrollment data from the Kentucky Department of Education (KDE). This vignette covers:
+
+1. Installation and setup
+2. Basic data fetching
+3. Understanding the data schema
+4. Working with district IDs
+5. Filtering and analysis
+6. Multi-year analysis
+
+## Installation
+
+Install from GitHub:
+
+```r
+# install.packages("remotes")
+remotes::install_github("almartin82/kyschooldata")
+```
+
+Load the package along with helpful companions:
+
+```{r load-packages}
+library(kyschooldata)
+library(dplyr)
+library(ggplot2)
+```
+
+## Data Availability
+
+Kentucky has extensive historical data spanning nearly three decades:
+
+```{r available-years}
+# Check available years
+years <- get_available_years()
+cat(sprintf("Data available from %d to %d\n", years$min_year, years$max_year))
+```
+
+| Years | Source | Aggregation Levels | Demographics |
+|-------|--------|-------------------|--------------|
+| 2020-2024 | SRC Current Format | State, District, School | Race, Gender, Special Populations |
+| 2012-2019 | SRC Historical | State, District, School | Race, Gender, Special Populations |
+| 1997-2011 | SAAR Data | State, District | Race |
+
+## Basic Data Fetching
+
+### Fetch a Single Year
+
+The main function is `fetch_enr()`, which downloads and processes enrollment data:
+
+```{r fetch-single-year}
+# Fetch 2024 enrollment data (2023-24 school year)
+enr_2024 <- fetch_enr(2024)
+
+# View the first few rows
+head(enr_2024)
+```
+
+### Understanding the Year Parameter
+
+The `end_year` parameter represents the end of the academic year:
+
+- `2024` = 2023-24 school year
+- `2023` = 2022-23 school year
+- etc.
+
+## Understanding the Data Schema
+
+### Tidy Format (Default)
+
+By default, `fetch_enr()` returns data in **tidy (long) format**. Each row represents a single observation for one entity, grade level, and subgroup combination.
+
+```{r data-structure}
+# Key columns in tidy format
+enr_2024 %>%
+  select(end_year, district_id, school_id, district_name,
+         type, grade_level, subgroup, n_students, pct) %>%
+  head(10)
+```
+
+| Column | Description |
+|--------|-------------|
+| `end_year` | School year end (e.g., 2024 for 2023-24) |
+| `district_id` | 3-digit district code |
+| `school_id` | 6-digit school code (NA for district-level) |
+| `district_name` | Name of the district |
+| `school_name` | Name of the school (NA for district-level) |
+| `type` | "State", "District", or "School" |
+| `grade_level` | Grade level ("TOTAL", "PK", "K", "01"-"12") |
+| `subgroup` | Demographic or population subgroup |
+| `n_students` | Student count |
+| `pct` | Percentage of total enrollment |
+
+### Subgroups
+
+The `subgroup` column identifies demographic categories:
+
+- `total_enrollment`: Total student count
+- **Race/Ethnicity**: `white`, `black`, `hispanic`, `asian`, `native_american`, `pacific_islander`, `multiracial`
+- **Special Populations**: `econ_disadv`, `lep`, `special_ed`
+
+```{r subgroups}
+# See all subgroups
+enr_2024 %>%
+  distinct(subgroup) %>%
+  pull(subgroup)
+```
+
+## Working with District IDs
+
+Kentucky uses a hierarchical ID system:
+
+- **District ID:** 3 digits (e.g., 275 for Jefferson County)
+- **School ID:** 6 digits (district + 3-digit school code)
+
+### Major Districts
+
+| District ID | District Name |
+|-------------|---------------|
+| 275 | Jefferson County (Louisville) |
+| 180 | Fayette County (Lexington) |
+| 045 | Boone County |
+| 360 | Kenton County |
+| 110 | Daviess County |
+
+### Finding Districts
+
+```{r find-district}
+# Search for a district by name
+enr_2024 %>%
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
+  filter(grepl("Jefferson", district_name, ignore.case = TRUE)) %>%
+  select(district_id, district_name, n_students)
+```
+
+## Filtering Data
+
+### Aggregation Level Flags
+
+The data includes boolean flags to identify aggregation levels:
+
+```{r filter-levels}
+# State totals
+state <- enr_2024 %>% filter(is_state)
+
+# All districts (excluding state totals)
+districts <- enr_2024 %>% filter(is_district)
+
+# All schools
+schools <- enr_2024 %>% filter(is_school)
+```
+
+### Common Filters
+
+```{r common-filters}
+# State total enrollment
+enr_2024 %>%
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
+  select(end_year, n_students)
+
+# Top 10 districts by enrollment
+enr_2024 %>%
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
+  arrange(desc(n_students)) %>%
+  select(district_name, n_students) %>%
+  head(10)
+
+# Demographics for state
+enr_2024 %>%
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("white", "black", "hispanic", "asian")) %>%
+  select(subgroup, n_students, pct)
+```
+
+## Multi-Year Analysis
+
+### Fetch Multiple Years
+
+```{r multi-year}
+# Fetch a range of years
+enr_recent <- fetch_enr_multi(2020:2024)
+
+# View statewide trend
+enr_recent %>%
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
+  select(end_year, n_students)
+```
+
+### Historical Analysis
+
+```{r historical}
+# Fetch early years (SAAR data - district level only)
+enr_early <- fetch_enr_multi(2000:2005)
+
+enr_early %>%
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
+  select(end_year, n_students)
+```
+
+## Visualization Example
+
+```{r visualization}
+# State enrollment trend
+state_trend <- enr_recent %>%
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL")
+
+ggplot(state_trend, aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.2, color = "#2C3E50") +
+  geom_point(size = 3, color = "#2C3E50") +
+  scale_y_continuous(labels = scales::comma, limits = c(0, NA)) +
+  labs(
+    title = "Kentucky Statewide Enrollment",
+    x = "School Year",
+    y = "Total Students"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Next Steps
+
+- Explore the [Enrollment Trends vignette](enrollment-trends.html) for in-depth analysis with visualizations
+- See the [function reference](../reference/index.html) for detailed documentation
+- Check `?fetch_enr` for parameter details
