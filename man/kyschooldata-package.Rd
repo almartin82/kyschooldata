@@ -62,6 +62,7 @@ Data is sourced from the Kentucky Department of Education:
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://almartin82.github.io/kyschooldata}
   \item \url{https://github.com/almartin82/kyschooldata}
   \item Report bugs at \url{https://github.com/almartin82/kyschooldata/issues}
 }

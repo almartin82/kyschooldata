@@ -24,3 +24,6 @@ __pycache__/
 
 # Cache
 *.rds
+cache/
+figure/
+vignettes/*_cache/
