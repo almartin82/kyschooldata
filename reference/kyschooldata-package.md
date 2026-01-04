@@ -75,6 +75,8 @@ Data is sourced from the Kentucky Department of Education:
 
 Useful links:
 
+- <https://almartin82.github.io/kyschooldata>
+
 - <https://github.com/almartin82/kyschooldata>
 
 - Report bugs at <https://github.com/almartin82/kyschooldata/issues>
