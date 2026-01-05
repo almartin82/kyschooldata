@@ -81,142 +81,181 @@ process_src_current <- function(raw_data, end_year) {
 
 #' Process a single SRC enrollment data frame
 #'
-#' @param df Raw data frame from SRC
+#' @param df Raw data frame from SRC (Kentucky-specific long format)
 #' @param end_year School year end
 #' @param level "primary" or "secondary"
-#' @return Processed data frame
+#' @return Processed data frame in wide format
 #' @keywords internal
 process_src_enrollment_df <- function(df, end_year, level) {
 
-  cols <- names(df)
-  n_rows <- nrow(df)
+  # Kentucky data is in long format with DEMOGRAPHIC column
+  # Structure: one row per (entity, demographic) combination
+  #
+  # Two column naming conventions:
+  # 2020-2023: DEMOGRAPHIC, DISTRICT NUMBER, SCHOOL NUMBER, TOTAL STUDENT COUNT,
+  #            PRESCHOOL COUNT, KINDERGARTEN COUNT, GRADE1 COUNT, etc.
+  # 2024+:    Demographic, District Number, School Number, All Grades,
+  #            Preschool, K, Grade 1, Grade 2, etc.
 
-  # Helper to find column by patterns (case-insensitive)
-  find_col <- function(patterns) {
+  # Helper function to find column (case-insensitive)
+  find_col <- function(df, patterns) {
+    cols <- names(df)
     for (pattern in patterns) {
-      matched <- grep(pattern, cols, value = TRUE, ignore.case = TRUE)
-      if (length(matched) > 0) return(matched[1])
+      matched <- grep(pattern, cols, ignore.case = TRUE)
+      if (length(matched) > 0) return(cols[matched[1]])
     }
     NULL
   }
 
-  # Determine if this is school or district level data
-  school_col <- find_col(c("^SCH_CD$", "^SCHOOL_CD$", "^SCHOOL$", "SCH_CODE", "SCHOOL_CODE"))
-  district_col <- find_col(c("^DIST_NUMBER$", "^DIST_CD$", "^DISTRICT$", "^DIST$", "DIST_CODE", "DISTRICT_CODE"))
+  # Find columns using both naming conventions
+  demographic_col <- find_col(df, c("^DEMOGRAPHIC$", "^Demographic$"))
+  district_num_col <- find_col(df, c("^DISTRICT NUMBER$", "^District Number$"))
+  district_name_col <- find_col(df, c("^DISTRICT NAME$", "^District Name$"))
+  school_num_col <- find_col(df, c("^SCHOOL NUMBER$", "^School Number$"))
+  school_name_col <- find_col(df, c("^SCHOOL NAME$", "^School Name$"))
 
-  has_school <- !is.null(school_col) && any(!is.na(df[[school_col]]) & df[[school_col]] != "")
+  # Grade level column maps (handle both naming conventions)
+  total_col <- find_col(df, c("^TOTAL STUDENT COUNT$", "^All Grades$"))
+  grade_pk_col <- find_col(df, c("^PRESCHOOL COUNT$", "^Preschool$"))
+  grade_k_col <- find_col(df, c("^KINDERGARTEN COUNT$", "^K$"))
+  grade_01_col <- find_col(df, c("^GRADE1 COUNT$", "^GRADE 1$", "^Grade 1$"))
+  grade_02_col <- find_col(df, c("^GRADE2 COUNT$", "^GRADE 2$", "^Grade 2$"))
+  grade_03_col <- find_col(df, c("^GRADE3 COUNT$", "^GRADE 3$", "^Grade 3$"))
+  grade_04_col <- find_col(df, c("^GRADE4 COUNT$", "^GRADE 4$", "^Grade 4$"))
+  grade_05_col <- find_col(df, c("^GRADE5 COUNT$", "^GRADE 5$", "^Grade 5$"))
+  grade_06_col <- find_col(df, c("^GRADE6 COUNT$", "^GRADE 6$", "^Grade 6$"))
+  grade_07_col <- find_col(df, c("^GRADE7 COUNT$", "^GRADE 7$", "^Grade 7$"))
+  grade_08_col <- find_col(df, c("^GRADE8 COUNT$", "^GRADE 8$", "^Grade 8$"))
+  grade_09_col <- find_col(df, c("^GRADE9 COUNT$", "^GRADE 9$", "^Grade 9$"))
+  grade_10_col <- find_col(df, c("^GRADE10 COUNT$", "^GRADE 10$", "^Grade 10$"))
+  grade_11_col <- find_col(df, c("^GRADE11 COUNT$", "^GRADE 11$", "^Grade 11$"))
+  grade_12_col <- find_col(df, c("^GRADE12 COUNT$", "^GRADE 12$", "^Grade 12$"))
 
-  # Initialize result
-  result <- data.frame(
-    end_year = rep(end_year, n_rows),
-    stringsAsFactors = FALSE
+  # Demographic name mapping (KY names -> our standard names)
+  demographic_map <- c(
+    "All Students" = "total_enrollment",
+    "Female" = "female",
+    "Male" = "male",
+    "African American" = "black",
+    "American Indian or Alaska Native" = "native_american",
+    "Asian" = "asian",
+    "Hispanic or Latino" = "hispanic",
+    "Native Hawaiian or Pacific Islander" = "pacific_islander",
+    "Two or More Races" = "multiracial",
+    "White (non-Hispanic)" = "white",
+    "Economically Disadvantaged" = "econ_disadv",
+    "Students with Disabilities (IEP)" = "special_ed",
+    "English Learner" = "lep"
+    # Note: Other demographics (Foster Care, Gifted, Homeless, Migrant, Military) are excluded
+    # as they don't fit our standard schema
   )
 
-  # Determine type
-  if (has_school) {
-    result$type <- "School"
-    result$school_id <- standardize_school_id(df[[school_col]])
-  } else {
-    result$type <- "District"
-    result$school_id <- rep(NA_character_, n_rows)
-  }
+  # Filter to only demographics we care about
+  df <- df[df[[demographic_col]] %in% names(demographic_map), ]
 
-  # District ID
-  if (!is.null(district_col)) {
-    result$district_id <- standardize_district_id(df[[district_col]])
-  } else if (has_school) {
-    # Extract district from school ID (first 3 digits)
-    result$district_id <- substr(result$school_id, 1, 3)
-  }
+  # Identify district vs school rows
+  # District rows have SCHOOL NAME = "---District Total---" or SCHOOL NUMBER = NA
+  # For 2024+, State rows have District Number = "999" and School Name = "All Schools"
+  df$is_district_row <- is.na(df[[school_num_col]]) |
+    df[[school_name_col]] == "---District Total---" |
+    (df[[school_name_col]] == "All Schools" & df[[district_num_col]] == "999")
 
-  # Names
-  school_name_col <- find_col(c("^SCH_NAME$", "^SCHOOL_NAME$", "SCHOOL_NM"))
-  if (!is.null(school_name_col)) {
-    result$school_name <- trimws(df[[school_name_col]])
-  } else {
-    result$school_name <- rep(NA_character_, n_rows)
-  }
+  # For each entity (district or school), create a wide-format row
+  entities <- unique(df[, c(district_num_col, district_name_col, school_num_col, school_name_col, "is_district_row")])
 
-  district_name_col <- find_col(c("^DIST_NAME$", "^DISTRICT_NAME$", "DISTRICT_NM"))
-  if (!is.null(district_name_col)) {
-    result$district_name <- trimws(df[[district_name_col]])
-  } else {
-    result$district_name <- rep(NA_character_, n_rows)
-  }
+  result_list <- lapply(seq_len(nrow(entities)), function(i) {
+    entity <- entities[i, ]
 
-  # Total enrollment
-  total_col <- find_col(c("^MEMBERSHIP$", "^TOTAL$", "^ENROLLMENT$", "TOTAL_ENROLLMENT", "TOTAL_MEMBERSHIP"))
-  if (!is.null(total_col)) {
-    result$row_total <- safe_numeric(df[[total_col]])
-  }
+    # Get all demographics for this entity
+    entity_data <- df[
+      df[[district_num_col]] == entity[[district_num_col]] &
+      df[[school_name_col]] == entity[[school_name_col]],
+    ]
 
-  # Demographics - Race/Ethnicity
-  demo_map <- list(
-    white = c("WHITE", "MEMBERSHIP_WHITE", "CNT_WHITE"),
-    black = c("BLACK", "AFRICAN_AMERICAN", "MEMBERSHIP_BLACK", "CNT_BLACK"),
-    hispanic = c("HISPANIC", "MEMBERSHIP_HISPANIC", "CNT_HISPANIC"),
-    asian = c("ASIAN", "MEMBERSHIP_ASIAN", "CNT_ASIAN"),
-    pacific_islander = c("PACIFIC", "NATIVE_HAWAIIAN", "MEMBERSHIP_PACIFIC", "CNT_PACIFIC"),
-    native_american = c("AMERICAN_INDIAN", "NATIVE_AMERICAN", "MEMBERSHIP_AMERICAN_INDIAN", "CNT_AMERICAN_INDIAN"),
-    multiracial = c("TWO_OR_MORE", "MULTIRACIAL", "MULTI", "MEMBERSHIP_TWO", "CNT_TWO")
-  )
+    # Initialize row
+    row <- list(
+      end_year = end_year,
+      district_id = as.character(entity[[district_num_col]]),
+      district_name = entity[[district_name_col]]
+    )
 
-  for (name in names(demo_map)) {
-    col <- find_col(demo_map[[name]])
-    if (!is.null(col)) {
-      result[[name]] <- safe_numeric(df[[col]])
+    # Determine type and set school fields
+    if (entity$is_district_row) {
+      row$type <- "District"
+      row$school_id <- NA_character_
+      row$school_name <- NA_character_
+    } else {
+      row$type <- "School"
+      row$school_id <- as.character(entity[[school_num_col]])
+      row$school_name <- entity[[school_name_col]]
     }
-  }
 
-  # Gender
-  male_col <- find_col(c("^MALE$", "MEMBERSHIP_MALE", "CNT_MALE"))
-  if (!is.null(male_col)) {
-    result$male <- safe_numeric(df[[male_col]])
-  }
+    # Get "All Students" row for total and grade levels
+    all_students <- entity_data[entity_data[[demographic_col]] == "All Students", ]
 
-  female_col <- find_col(c("^FEMALE$", "MEMBERSHIP_FEMALE", "CNT_FEMALE"))
-  if (!is.null(female_col)) {
-    result$female <- safe_numeric(df[[female_col]])
-  }
-
-  # Special populations
-  special_map <- list(
-    econ_disadv = c("ECON", "ECONOMICALLY", "FREE_REDUCED", "FRL"),
-    lep = c("LEP", "ELL", "ENGLISH_LEARNER", "LIMITED_ENGLISH"),
-    special_ed = c("SPED", "SPECIAL_ED", "IEP", "DISABILITY")
-  )
-
-  for (name in names(special_map)) {
-    col <- find_col(special_map[[name]])
-    if (!is.null(col)) {
-      result[[name]] <- safe_numeric(df[[col]])
+    if (nrow(all_students) > 0) {
+      as_row <- all_students[1, ]  # Take first row
+      row$row_total <- safe_numeric(as_row[[total_col]])
+      row$grade_pk <- safe_numeric(as_row[[grade_pk_col]])
+      row$grade_k <- safe_numeric(as_row[[grade_k_col]])
+      row$grade_01 <- safe_numeric(as_row[[grade_01_col]])
+      row$grade_02 <- safe_numeric(as_row[[grade_02_col]])
+      row$grade_03 <- safe_numeric(as_row[[grade_03_col]])
+      row$grade_04 <- safe_numeric(as_row[[grade_04_col]])
+      row$grade_05 <- safe_numeric(as_row[[grade_05_col]])
+      row$grade_06 <- safe_numeric(as_row[[grade_06_col]])
+      row$grade_07 <- safe_numeric(as_row[[grade_07_col]])
+      row$grade_08 <- safe_numeric(as_row[[grade_08_col]])
+      row$grade_09 <- safe_numeric(as_row[[grade_09_col]])
+      row$grade_10 <- safe_numeric(as_row[[grade_10_col]])
+      row$grade_11 <- safe_numeric(as_row[[grade_11_col]])
+      row$grade_12 <- safe_numeric(as_row[[grade_12_col]])
+    } else {
+      row$row_total <- NA_integer_
+      row$grade_pk <- NA_integer_
+      row$grade_k <- NA_integer_
+      row$grade_01 <- NA_integer_
+      row$grade_02 <- NA_integer_
+      row$grade_03 <- NA_integer_
+      row$grade_04 <- NA_integer_
+      row$grade_05 <- NA_integer_
+      row$grade_06 <- NA_integer_
+      row$grade_07 <- NA_integer_
+      row$grade_08 <- NA_integer_
+      row$grade_09 <- NA_integer_
+      row$grade_10 <- NA_integer_
+      row$grade_11 <- NA_integer_
+      row$grade_12 <- NA_integer_
     }
-  }
 
-  # Grade levels
-  grade_map <- list(
-    grade_pk = c("^PK$", "^PRE_?K", "PRESCHOOL", "GRADE_PK"),
-    grade_k = c("^K$", "^KG$", "KINDERGARTEN", "GRADE_K"),
-    grade_01 = c("^G01$", "^GRADE_?1$", "^G1$", "GRADE_01"),
-    grade_02 = c("^G02$", "^GRADE_?2$", "^G2$", "GRADE_02"),
-    grade_03 = c("^G03$", "^GRADE_?3$", "^G3$", "GRADE_03"),
-    grade_04 = c("^G04$", "^GRADE_?4$", "^G4$", "GRADE_04"),
-    grade_05 = c("^G05$", "^GRADE_?5$", "^G5$", "GRADE_05"),
-    grade_06 = c("^G06$", "^GRADE_?6$", "^G6$", "GRADE_06"),
-    grade_07 = c("^G07$", "^GRADE_?7$", "^G7$", "GRADE_07"),
-    grade_08 = c("^G08$", "^GRADE_?8$", "^G8$", "GRADE_08"),
-    grade_09 = c("^G09$", "^GRADE_?9$", "^G9$", "GRADE_09"),
-    grade_10 = c("^G10$", "^GRADE_?10$", "GRADE_10"),
-    grade_11 = c("^G11$", "^GRADE_?11$", "GRADE_11"),
-    grade_12 = c("^G12$", "^GRADE_?12$", "GRADE_12")
-  )
+    # Add demographic columns from their respective rows
+    for (j in seq_len(nrow(entity_data))) {
+      demo_row <- entity_data[j, ]
+      ky_name <- demo_row[[demographic_col]]
+      std_name <- demographic_map[ky_name]
 
-  for (name in names(grade_map)) {
-    col <- find_col(grade_map[[name]])
-    if (!is.null(col)) {
-      result[[name]] <- safe_numeric(df[[col]])
+      # Skip total_enrollment (already handled) and grade levels (not in demographic rows)
+      if (!is.na(std_name) && std_name != "total_enrollment") {
+        # Demographic counts come from total column
+        row[[std_name]] <- safe_numeric(demo_row[[total_col]])
+      }
     }
-  }
+
+    # Ensure all expected columns exist (fill with NA if missing)
+    expected_demos <- c("white", "black", "hispanic", "asian", "native_american",
+                       "pacific_islander", "multiracial", "male", "female",
+                       "econ_disadv", "lep", "special_ed")
+    for (col in expected_demos) {
+      if (!(col %in% names(row))) {
+        row[[col]] <- NA_integer_
+      }
+    }
+
+    as.data.frame(row, stringsAsFactors = FALSE)
+  })
+
+  # Combine all rows
+  result <- dplyr::bind_rows(result_list)
 
   result
 }
