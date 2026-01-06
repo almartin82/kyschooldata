@@ -152,20 +152,27 @@ processes enrollment data:</p>
 <span></span>
 <span><span class="co"># View the first few rows</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">enr_2024</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   end_year     type district_id school_id district_name school_name grade_level</span></span>
-<span><span class="co">## 1     2024    State        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;          PK</span></span>
-<span><span class="co">## 2     2024 District        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;          PK</span></span>
-<span><span class="co">## 3     2024 District        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;          PK</span></span>
-<span><span class="co">## 4     2024 District        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;          PK</span></span>
-<span><span class="co">## 5     2024 District        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;          PK</span></span>
-<span><span class="co">## 6     2024 District        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;          PK</span></span>
-<span><span class="co">##           subgroup n_students pct is_state is_district is_school</span></span>
-<span><span class="co">## 1 total_enrollment     407122  NA     TRUE       FALSE     FALSE</span></span>
-<span><span class="co">## 2 total_enrollment      31467  NA    FALSE        TRUE     FALSE</span></span>
-<span><span class="co">## 3 total_enrollment      13950  NA    FALSE        TRUE     FALSE</span></span>
-<span><span class="co">## 4 total_enrollment      17517  NA    FALSE        TRUE     FALSE</span></span>
-<span><span class="co">## 5 total_enrollment       3477  NA    FALSE        TRUE     FALSE</span></span>
-<span><span class="co">## 6 total_enrollment         34  NA    FALSE        TRUE     FALSE</span></span></code></pre>
+<pre><code><span><span class="co">##   end_year     type district_id school_id district_name</span></span>
+<span><span class="co">## 1     2024    State        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;</span></span>
+<span><span class="co">## 2     2024 District         999      &lt;NA&gt; All Districts</span></span>
+<span><span class="co">## 3     2024 District         001      &lt;NA&gt;  Adair County</span></span>
+<span><span class="co">## 4     2024   School         001       010  Adair County</span></span>
+<span><span class="co">## 5     2024   School         001       012  Adair County</span></span>
+<span><span class="co">## 6     2024   School         001       014  Adair County</span></span>
+<span><span class="co">##                  school_name grade_level         subgroup n_students pct</span></span>
+<span><span class="co">## 1                       &lt;NA&gt;       TOTAL total_enrollment    1397078   1</span></span>
+<span><span class="co">## 2                       &lt;NA&gt;       TOTAL total_enrollment     686224   1</span></span>
+<span><span class="co">## 3                       &lt;NA&gt;       TOTAL total_enrollment       3068   1</span></span>
+<span><span class="co">## 4   Adair County High School       TOTAL total_enrollment        847   1</span></span>
+<span><span class="co">## 5     Adair Learning Academy       TOTAL total_enrollment        263   1</span></span>
+<span><span class="co">## 6 Adair County Middle School       TOTAL total_enrollment        632   1</span></span>
+<span><span class="co">##   is_state is_district is_school aggregation_flag</span></span>
+<span><span class="co">## 1     TRUE       FALSE     FALSE            state</span></span>
+<span><span class="co">## 2    FALSE        TRUE     FALSE         district</span></span>
+<span><span class="co">## 3    FALSE        TRUE     FALSE         district</span></span>
+<span><span class="co">## 4    FALSE       FALSE      TRUE           campus</span></span>
+<span><span class="co">## 5    FALSE       FALSE      TRUE           campus</span></span>
+<span><span class="co">## 6    FALSE       FALSE      TRUE           campus</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="understanding-the-year-parameter">Understanding the Year Parameter<a class="anchor" aria-label="anchor" href="#understanding-the-year-parameter"></a>
@@ -197,27 +204,27 @@ entity, grade level, and subgroup combination.</p>
 <span>         <span class="va">type</span>, <span class="va">grade_level</span>, <span class="va">subgroup</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    end_year district_id school_id district_name     type grade_level</span></span>
-<span><span class="co">## 1      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;    State          PK</span></span>
-<span><span class="co">## 2      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
-<span><span class="co">## 3      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
-<span><span class="co">## 4      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
-<span><span class="co">## 5      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
-<span><span class="co">## 6      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
-<span><span class="co">## 7      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
-<span><span class="co">## 8      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
-<span><span class="co">## 9      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
-<span><span class="co">## 10     2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt; District          PK</span></span>
+<span><span class="co">## 1      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;    State       TOTAL</span></span>
+<span><span class="co">## 2      2024         999      &lt;NA&gt; All Districts District       TOTAL</span></span>
+<span><span class="co">## 3      2024         001      &lt;NA&gt;  Adair County District       TOTAL</span></span>
+<span><span class="co">## 4      2024         001       010  Adair County   School       TOTAL</span></span>
+<span><span class="co">## 5      2024         001       012  Adair County   School       TOTAL</span></span>
+<span><span class="co">## 6      2024         001       014  Adair County   School       TOTAL</span></span>
+<span><span class="co">## 7      2024         001       016  Adair County   School       TOTAL</span></span>
+<span><span class="co">## 8      2024         001       020  Adair County   School       TOTAL</span></span>
+<span><span class="co">## 9      2024         005      &lt;NA&gt;  Allen County District       TOTAL</span></span>
+<span><span class="co">## 10     2024         005       010  Allen County   School       TOTAL</span></span>
 <span><span class="co">##            subgroup n_students pct</span></span>
-<span><span class="co">## 1  total_enrollment     407122  NA</span></span>
-<span><span class="co">## 2  total_enrollment      31467  NA</span></span>
-<span><span class="co">## 3  total_enrollment      13950  NA</span></span>
-<span><span class="co">## 4  total_enrollment      17517  NA</span></span>
-<span><span class="co">## 5  total_enrollment       3477  NA</span></span>
-<span><span class="co">## 6  total_enrollment         34  NA</span></span>
-<span><span class="co">## 7  total_enrollment        591  NA</span></span>
-<span><span class="co">## 8  total_enrollment       3089  NA</span></span>
-<span><span class="co">## 9  total_enrollment         40  NA</span></span>
-<span><span class="co">## 10 total_enrollment       2056  NA</span></span></code></pre>
+<span><span class="co">## 1  total_enrollment    1397078   1</span></span>
+<span><span class="co">## 2  total_enrollment     686224   1</span></span>
+<span><span class="co">## 3  total_enrollment       3068   1</span></span>
+<span><span class="co">## 4  total_enrollment        847   1</span></span>
+<span><span class="co">## 5  total_enrollment        263   1</span></span>
+<span><span class="co">## 6  total_enrollment        632   1</span></span>
+<span><span class="co">## 7  total_enrollment        605   1</span></span>
+<span><span class="co">## 8  total_enrollment        722   1</span></span>
+<span><span class="co">## 9  total_enrollment       3336   1</span></span>
+<span><span class="co">## 10 total_enrollment       1083   1</span></span></code></pre>
 <table class="table">
 <thead><tr class="header">
 <th>Column</th>
@@ -291,7 +298,10 @@ categories:</p>
 <span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">subgroup</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">subgroup</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "total_enrollment"</span></span></code></pre>
+<pre><code><span><span class="co">##  [1] "total_enrollment" "white"            "black"            "hispanic"        </span></span>
+<span><span class="co">##  [5] "asian"            "native_american"  "pacific_islander" "multiracial"     </span></span>
+<span><span class="co">##  [9] "male"             "female"           "special_ed"       "lep"             </span></span>
+<span><span class="co">## [13] "econ_disadv"</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -347,8 +357,8 @@ code)</li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Jefferson"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_id</span>, <span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] district_id   district_name n_students   </span></span>
-<span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
+<pre><code><span><span class="co">##   district_id    district_name n_students</span></span>
+<span><span class="co">## 1         275 Jefferson County     103459</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -376,8 +386,8 @@ code)</li>
 <span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] end_year   n_students</span></span>
-<span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
+<pre><code><span><span class="co">##   end_year n_students</span></span>
+<span><span class="co">## 1     2024    1397078</span></span></code></pre>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Top 10 districts by enrollment</span></span>
 <span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -385,16 +395,28 @@ code)</li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] district_name n_students   </span></span>
-<span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
+<pre><code><span><span class="co">##       district_name n_students</span></span>
+<span><span class="co">## 1     All Districts     686224</span></span>
+<span><span class="co">## 2  Jefferson County     103459</span></span>
+<span><span class="co">## 3    Fayette County      44362</span></span>
+<span><span class="co">## 4      Boone County      21583</span></span>
+<span><span class="co">## 5     Warren County      20394</span></span>
+<span><span class="co">## 6     Hardin County      16287</span></span>
+<span><span class="co">## 7     Kenton County      14645</span></span>
+<span><span class="co">## 8    Bullitt County      13674</span></span>
+<span><span class="co">## 9     Oldham County      12546</span></span>
+<span><span class="co">## 10   Daviess County      12011</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Demographics for state</span></span>
 <span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
 <span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"black"</span>, <span class="st">"hispanic"</span>, <span class="st">"asian"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subgroup</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] subgroup   n_students pct       </span></span>
-<span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
+<pre><code><span><span class="co">##   subgroup n_students        pct</span></span>
+<span><span class="co">## 1    white     994258 0.71166964</span></span>
+<span><span class="co">## 2    black     152218 0.10895455</span></span>
+<span><span class="co">## 3 hispanic     141735 0.10145103</span></span>
+<span><span class="co">## 4    asian      29203 0.02090291</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -411,8 +433,12 @@ code)</li>
 <span><span class="va">enr_recent</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] end_year   n_students</span></span>
-<span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
+<pre><code><span><span class="co">##   end_year n_students</span></span>
+<span><span class="co">## 1     2020    1472317</span></span>
+<span><span class="co">## 2     2021    1434970</span></span>
+<span><span class="co">## 3     2022    1451381</span></span>
+<span><span class="co">## 4     2023    1456127</span></span>
+<span><span class="co">## 5     2024    1397078</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="historical-analysis">Historical Analysis<a class="anchor" aria-label="anchor" href="#historical-analysis"></a>

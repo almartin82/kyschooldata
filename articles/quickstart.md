@@ -64,20 +64,27 @@ enr_2024 <- fetch_enr(2024)
 head(enr_2024)
 ```
 
-    ##   end_year     type district_id school_id district_name school_name grade_level
-    ## 1     2024    State        <NA>      <NA>          <NA>        <NA>          PK
-    ## 2     2024 District        <NA>      <NA>          <NA>        <NA>          PK
-    ## 3     2024 District        <NA>      <NA>          <NA>        <NA>          PK
-    ## 4     2024 District        <NA>      <NA>          <NA>        <NA>          PK
-    ## 5     2024 District        <NA>      <NA>          <NA>        <NA>          PK
-    ## 6     2024 District        <NA>      <NA>          <NA>        <NA>          PK
-    ##           subgroup n_students pct is_state is_district is_school
-    ## 1 total_enrollment     407122  NA     TRUE       FALSE     FALSE
-    ## 2 total_enrollment      31467  NA    FALSE        TRUE     FALSE
-    ## 3 total_enrollment      13950  NA    FALSE        TRUE     FALSE
-    ## 4 total_enrollment      17517  NA    FALSE        TRUE     FALSE
-    ## 5 total_enrollment       3477  NA    FALSE        TRUE     FALSE
-    ## 6 total_enrollment         34  NA    FALSE        TRUE     FALSE
+    ##   end_year     type district_id school_id district_name
+    ## 1     2024    State        <NA>      <NA>          <NA>
+    ## 2     2024 District         999      <NA> All Districts
+    ## 3     2024 District         001      <NA>  Adair County
+    ## 4     2024   School         001       010  Adair County
+    ## 5     2024   School         001       012  Adair County
+    ## 6     2024   School         001       014  Adair County
+    ##                  school_name grade_level         subgroup n_students pct
+    ## 1                       <NA>       TOTAL total_enrollment    1397078   1
+    ## 2                       <NA>       TOTAL total_enrollment     686224   1
+    ## 3                       <NA>       TOTAL total_enrollment       3068   1
+    ## 4   Adair County High School       TOTAL total_enrollment        847   1
+    ## 5     Adair Learning Academy       TOTAL total_enrollment        263   1
+    ## 6 Adair County Middle School       TOTAL total_enrollment        632   1
+    ##   is_state is_district is_school aggregation_flag
+    ## 1     TRUE       FALSE     FALSE            state
+    ## 2    FALSE        TRUE     FALSE         district
+    ## 3    FALSE        TRUE     FALSE         district
+    ## 4    FALSE       FALSE      TRUE           campus
+    ## 5    FALSE       FALSE      TRUE           campus
+    ## 6    FALSE       FALSE      TRUE           campus
 
 ### Understanding the Year Parameter
 
@@ -105,27 +112,27 @@ enr_2024 %>%
 ```
 
     ##    end_year district_id school_id district_name     type grade_level
-    ## 1      2024        <NA>      <NA>          <NA>    State          PK
-    ## 2      2024        <NA>      <NA>          <NA> District          PK
-    ## 3      2024        <NA>      <NA>          <NA> District          PK
-    ## 4      2024        <NA>      <NA>          <NA> District          PK
-    ## 5      2024        <NA>      <NA>          <NA> District          PK
-    ## 6      2024        <NA>      <NA>          <NA> District          PK
-    ## 7      2024        <NA>      <NA>          <NA> District          PK
-    ## 8      2024        <NA>      <NA>          <NA> District          PK
-    ## 9      2024        <NA>      <NA>          <NA> District          PK
-    ## 10     2024        <NA>      <NA>          <NA> District          PK
+    ## 1      2024        <NA>      <NA>          <NA>    State       TOTAL
+    ## 2      2024         999      <NA> All Districts District       TOTAL
+    ## 3      2024         001      <NA>  Adair County District       TOTAL
+    ## 4      2024         001       010  Adair County   School       TOTAL
+    ## 5      2024         001       012  Adair County   School       TOTAL
+    ## 6      2024         001       014  Adair County   School       TOTAL
+    ## 7      2024         001       016  Adair County   School       TOTAL
+    ## 8      2024         001       020  Adair County   School       TOTAL
+    ## 9      2024         005      <NA>  Allen County District       TOTAL
+    ## 10     2024         005       010  Allen County   School       TOTAL
     ##            subgroup n_students pct
-    ## 1  total_enrollment     407122  NA
-    ## 2  total_enrollment      31467  NA
-    ## 3  total_enrollment      13950  NA
-    ## 4  total_enrollment      17517  NA
-    ## 5  total_enrollment       3477  NA
-    ## 6  total_enrollment         34  NA
-    ## 7  total_enrollment        591  NA
-    ## 8  total_enrollment       3089  NA
-    ## 9  total_enrollment         40  NA
-    ## 10 total_enrollment       2056  NA
+    ## 1  total_enrollment    1397078   1
+    ## 2  total_enrollment     686224   1
+    ## 3  total_enrollment       3068   1
+    ## 4  total_enrollment        847   1
+    ## 5  total_enrollment        263   1
+    ## 6  total_enrollment        632   1
+    ## 7  total_enrollment        605   1
+    ## 8  total_enrollment        722   1
+    ## 9  total_enrollment       3336   1
+    ## 10 total_enrollment       1083   1
 
 | Column          | Description                                 |
 |-----------------|---------------------------------------------|
@@ -156,7 +163,10 @@ enr_2024 %>%
   pull(subgroup)
 ```
 
-    ## [1] "total_enrollment"
+    ##  [1] "total_enrollment" "white"            "black"            "hispanic"        
+    ##  [5] "asian"            "native_american"  "pacific_islander" "multiracial"     
+    ##  [9] "male"             "female"           "special_ed"       "lep"             
+    ## [13] "econ_disadv"
 
 ## Working with District IDs
 
@@ -185,8 +195,8 @@ enr_2024 %>%
   select(district_id, district_name, n_students)
 ```
 
-    ## [1] district_id   district_name n_students   
-    ## <0 rows> (or 0-length row.names)
+    ##   district_id    district_name n_students
+    ## 1         275 Jefferson County     103459
 
 ## Filtering Data
 
@@ -214,8 +224,8 @@ enr_2024 %>%
   select(end_year, n_students)
 ```
 
-    ## [1] end_year   n_students
-    ## <0 rows> (or 0-length row.names)
+    ##   end_year n_students
+    ## 1     2024    1397078
 
 ``` r
 # Top 10 districts by enrollment
@@ -226,8 +236,17 @@ enr_2024 %>%
   head(10)
 ```
 
-    ## [1] district_name n_students   
-    ## <0 rows> (or 0-length row.names)
+    ##       district_name n_students
+    ## 1     All Districts     686224
+    ## 2  Jefferson County     103459
+    ## 3    Fayette County      44362
+    ## 4      Boone County      21583
+    ## 5     Warren County      20394
+    ## 6     Hardin County      16287
+    ## 7     Kenton County      14645
+    ## 8    Bullitt County      13674
+    ## 9     Oldham County      12546
+    ## 10   Daviess County      12011
 
 ``` r
 # Demographics for state
@@ -237,8 +256,11 @@ enr_2024 %>%
   select(subgroup, n_students, pct)
 ```
 
-    ## [1] subgroup   n_students pct       
-    ## <0 rows> (or 0-length row.names)
+    ##   subgroup n_students        pct
+    ## 1    white     994258 0.71166964
+    ## 2    black     152218 0.10895455
+    ## 3 hispanic     141735 0.10145103
+    ## 4    asian      29203 0.02090291
 
 ## Multi-Year Analysis
 
@@ -254,8 +276,12 @@ enr_recent %>%
   select(end_year, n_students)
 ```
 
-    ## [1] end_year   n_students
-    ## <0 rows> (or 0-length row.names)
+    ##   end_year n_students
+    ## 1     2020    1472317
+    ## 2     2021    1434970
+    ## 3     2022    1451381
+    ## 4     2023    1456127
+    ## 5     2024    1397078
 
 ### Historical Analysis
 
