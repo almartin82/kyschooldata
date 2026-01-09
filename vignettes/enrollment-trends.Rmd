@@ -353,9 +353,9 @@ ggplot(harlan, aes(x = end_year, y = n_students)) +
   theme_readme()
 ```
 
-## 15. The multiracial generation is growing
+## 15. The multiracial population is growing
 
-Multiracial students are Kentucky's fastest-growing demographic, more than tripling since 2010. This reflects national trends in multiracial identity.
+Multiracial students now make up 5.4% of Kentucky's enrollment, up from 4.3% in 2020. Kentucky began tracking multiracial students in 2020 when the demographic category was added to federal reporting standards.
 
 ```{r multiracial-growth}
 multiracial <- enr %>%
@@ -366,7 +366,7 @@ ggplot(multiracial, aes(x = end_year, y = n_students)) +
   geom_point(size = 3, color = "#1ABC9C") +
   scale_y_continuous(labels = comma) +
   labs(title = "Multiracial Students in Kentucky",
-       subtitle = "More than tripled since 2010",
+       subtitle = "5.4% of enrollment, up from 4.3% in 2020",
        x = "School Year", y = "Students") +
   theme_readme()
 ```
