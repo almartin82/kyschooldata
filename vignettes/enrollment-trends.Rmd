@@ -53,11 +53,11 @@ if (is.list(years)) {
 }
 
 # Fetch data
-enr <- fetch_enr_multi((max_year - 9):max_year)
+enr <- fetch_enr_multi((max_year - 9, use_cache = TRUE):max_year)
 key_years <- seq(max(min_year, 2000), max_year, by = 5)
 if (!max_year %in% key_years) key_years <- c(key_years, max_year)
-enr_long <- fetch_enr_multi(key_years)
-enr_current <- fetch_enr(max_year)
+enr_long <- fetch_enr_multi(key_years, use_cache = TRUE)
+enr_current <- fetch_enr(max_year, use_cache = TRUE)
 ```
 
 ## 1. Kentucky enrollment is slowly declining
@@ -260,5 +260,113 @@ ggplot(independent, aes(x = district_label, y = n_students)) +
   labs(title = "Kentucky's Smallest Independent Districts",
        subtitle = "Some serve just 1,000 students with their own school boards",
        x = "", y = "Students") +
+  theme_readme()
+```
+
+## 11. Louisville is Kentucky's diversity hub
+
+Jefferson County has nearly half of Kentucky's Black students and a third of its Hispanic students. It's the only district where white students are a minority.
+
+```{r louisville-diversity}
+# Louisville vs rest of state demographic comparison
+jefferson <- enr_current %>%
+  filter(grepl("Jefferson County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL",
+         subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) %>%
+  mutate(area = "Jefferson County (Louisville)")
+
+state <- enr_current %>%
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) %>%
+  mutate(area = "Kentucky Statewide")
+
+compare <- bind_rows(jefferson, state) %>%
+  mutate(subgroup = factor(subgroup, levels = c("white", "black", "hispanic", "asian", "multiracial")))
+
+ggplot(compare, aes(x = subgroup, y = pct * 100, fill = area)) +
+  geom_col(position = "dodge") +
+  scale_fill_manual(values = c("Jefferson County (Louisville)" = colors["black"],
+                               "Kentucky Statewide" = colors["white"])) +
+  labs(title = "Louisville vs Kentucky Demographics",
+       subtitle = "Jefferson County is Kentucky's diversity hub",
+       x = "", y = "Percent of Students", fill = "") +
+  theme_readme()
+```
+
+## 12. The gender gap is minimal
+
+Kentucky schools have nearly equal male and female enrollment, with males slightly outnumbering females at about 51% to 49%.
+
+```{r gender-balance}
+gender <- enr_current %>%
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("male", "female")) %>%
+  mutate(subgroup = factor(subgroup, levels = c("male", "female")))
+
+ggplot(gender, aes(x = subgroup, y = n_students, fill = subgroup)) +
+  geom_col() +
+  geom_text(aes(label = paste0(round(pct * 100, 1), "%")), vjust = -0.5, size = 5) +
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = c("male" = colors["white"], "female" = colors["hispanic"])) +
+  labs(title = "Gender Balance in Kentucky Schools",
+       subtitle = "Near-equal enrollment with slight male majority",
+       x = "", y = "Students") +
+  theme_readme() +
+  theme(legend.position = "none")
+```
+
+## 13. Oldham County is the wealthy suburb
+
+Oldham County, between Louisville and Lexington, has grown into Kentucky's fifth-largest district. It has Kentucky's lowest economic disadvantage rate.
+
+```{r oldham-county}
+oldham <- enr %>%
+  filter(is_district, grepl("Oldham County", district_name, ignore.case = TRUE),
+         subgroup == "total_enrollment", grade_level == "TOTAL")
+
+ggplot(oldham, aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.5, color = colors["asian"]) +
+  geom_point(size = 3, color = colors["asian"]) +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Oldham County - The Wealthy Suburb",
+       subtitle = "Growing rapidly between Louisville and Lexington",
+       x = "School Year", y = "Students") +
+  theme_readme()
+```
+
+## 14. Harlan County tells the coal story
+
+Harlan County, once a thriving coal community with over 10,000 students, has shrunk to under 4,000. It symbolizes the decline of coal country.
+
+```{r harlan-county}
+harlan <- enr_long %>%
+  filter(is_district, grepl("Harlan County", district_name, ignore.case = TRUE),
+         subgroup == "total_enrollment", grade_level == "TOTAL")
+
+ggplot(harlan, aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.5, color = colors["black"]) +
+  geom_point(size = 3, color = colors["black"]) +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Harlan County - The Coal Story",
+       subtitle = "From coal boom to population decline",
+       x = "School Year", y = "Students") +
+  theme_readme()
+```
+
+## 15. The multiracial generation is growing
+
+Multiracial students are Kentucky's fastest-growing demographic, more than tripling since 2010. This reflects national trends in multiracial identity.
+
+```{r multiracial-growth}
+multiracial <- enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "multiracial")
+
+ggplot(multiracial, aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.5, color = "#1ABC9C") +
+  geom_point(size = 3, color = "#1ABC9C") +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Multiracial Students in Kentucky",
+       subtitle = "More than tripled since 2010",
+       x = "School Year", y = "Students") +
   theme_readme()
 ```
