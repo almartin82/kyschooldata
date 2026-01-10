@@ -19,7 +19,7 @@ Attendance Report) data, transforming it into tidy format for analysis.
 \item{\code{\link{tidy_enr}}}{Transform wide data to tidy (long) format}
 \item{\code{\link{id_enr_aggs}}}{Add aggregation level flags}
 \item{\code{\link{enr_grade_aggs}}}{Create grade-level aggregations}
-\item{\code{\link{get_available_years}}}{Show available data years}
+\item{\code{\link{get_available_years}}}{Show available enrollment data years}
 }
 }
 

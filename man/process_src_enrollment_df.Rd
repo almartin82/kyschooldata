@@ -7,14 +7,14 @@
 process_src_enrollment_df(df, end_year, level)
 }
 \arguments{
-\item{df}{Raw data frame from SRC}
+\item{df}{Raw data frame from SRC (Kentucky-specific long format)}
 
 \item{end_year}{School year end}
 
 \item{level}{"primary" or "secondary"}
 }
 \value{
-Processed data frame
+Processed data frame in wide format
 }
 \description{
 Process a single SRC enrollment data frame

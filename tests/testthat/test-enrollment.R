@@ -174,3 +174,132 @@ test_that("fetch_enr_multi combines multiple years", {
   expect_true(2022 %in% result$end_year)
   expect_true(2023 %in% result$end_year)
 })
+
+# Tidyness correctness tests (added 2026-01-05)
+test_that("tidy format has all expected subgroups", {
+  skip_on_cran()
+  skip_if_offline()
+
+  result <- fetch_enr(2023, tidy = TRUE, use_cache = TRUE)
+
+  # Check all expected subgroups are present
+  expected_subgroups <- c("total_enrollment", "white", "black", "hispanic", "asian",
+                         "native_american", "pacific_islander", "multiracial",
+                         "male", "female", "special_ed", "lep", "econ_disadv")
+  actual_subgroups <- unique(result$subgroup)
+
+  expect_true(all(expected_subgroups %in% actual_subgroups),
+              info = sprintf("Missing subgroups: %s",
+                            setdiff(expected_subgroups, actual_subgroups)))
+})
+
+test_that("tidy format has all expected grade levels", {
+  skip_on_cran()
+  skip_if_offline()
+
+  result <- fetch_enr(2023, tidy = TRUE, use_cache = TRUE)
+
+  # Check all expected grade levels are present
+  expected_grades <- c("TOTAL", "PK", "K", "01", "02", "03", "04", "05", "06",
+                      "07", "08", "09", "10", "11", "12")
+  actual_grades <- unique(result$grade_level)
+
+  expect_true(all(expected_grades %in% actual_grades),
+              info = sprintf("Missing grade levels: %s",
+                            setdiff(expected_grades, actual_grades)))
+})
+
+test_that("district_id and district_name are populated for non-State rows", {
+  skip_on_cran()
+  skip_if_offline()
+
+  result <- fetch_enr(2023, tidy = TRUE, use_cache = TRUE)
+
+  # Check district rows have IDs and names
+  district_rows <- result[result$type == "District", ]
+  expect_true(sum(is.na(district_rows$district_id)) == 0,
+              info = "District rows should not have NA district_id")
+  expect_true(sum(is.na(district_rows$district_name)) == 0,
+              info = "District rows should not have NA district_name")
+
+  # Check school rows have district IDs and names
+  school_rows <- result[result$type == "School", ]
+  expect_true(sum(is.na(school_rows$district_id)) == 0,
+              info = "School rows should not have NA district_id")
+  expect_true(sum(is.na(school_rows$district_name)) == 0,
+              info = "School rows should not have NA district_name")
+})
+
+test_that("no Inf or NaN values in tidy output", {
+  skip_on_cran()
+  skip_if_offline()
+
+  result <- fetch_enr(2023, tidy = TRUE, use_cache = TRUE)
+
+  # Check for Inf/NaN in n_students
+  expect_false(any(is.infinite(result$n_students)),
+               info = "n_students should not contain Inf values")
+  expect_false(any(is.nan(result$n_students)),
+               info = "n_students should not contain NaN values")
+
+  # Check for Inf/NaN in pct
+  expect_false(any(is.infinite(result$pct)),
+               info = "pct should not contain Inf values")
+  expect_false(any(is.nan(result$pct)),
+               info = "pct should not contain NaN values")
+})
+
+test_that("state total enrollment is reasonable", {
+  skip_on_cran()
+  skip_if_offline()
+
+  result <- fetch_enr(2023, tidy = TRUE, use_cache = TRUE)
+
+  # Get state total
+  state_total <- result[result$type == "State" &
+                        result$subgroup == "total_enrollment" &
+                        result$grade_level == "TOTAL", "n_students"]
+
+  # State total should be positive and reasonable (500k-2M for Kentucky)
+  expect_true(length(state_total) == 1, info = "Should have exactly 1 state total row")
+  expect_true(state_total > 500000, info = "State total should be > 500k")
+  expect_true(state_total < 2000000, info = "State total should be < 2M")
+})
+
+test_that("percentages are calculated correctly", {
+  skip_on_cran()
+  skip_if_offline()
+
+  result <- fetch_enr(2023, tidy = TRUE, use_cache = TRUE)
+
+  # Check that pct = n_students / total for a specific district
+  adair_total <- result[result$district_id == "001" &
+                        result$type == "District" &
+                        result$subgroup == "total_enrollment" &
+                        result$grade_level == "TOTAL", "n_students"]
+
+  adair_white <- result[result$district_id == "001" &
+                        result$type == "District" &
+                        result$subgroup == "white" &
+                        result$grade_level == "TOTAL", ]
+
+  expect_true(nrow(adair_white) == 1, info = "Should have exactly 1 white subgroup row for Adair")
+  expect_equal(adair_white$pct, adair_white$n_students / adair_total,
+               tolerance = 0.0001,
+               info = "pct should equal n_students / total")
+})
+
+test_that("both 2023 and 2024 data work correctly", {
+  skip_on_cran()
+  skip_if_offline()
+
+  # Test 2023 (primary/secondary format)
+  result_2023 <- fetch_enr(2023, tidy = TRUE, use_cache = TRUE)
+  expect_true("district_id" %in% names(result_2023))
+  expect_true(length(unique(result_2023$subgroup)) >= 13)
+
+  # Test 2024 (combined KYRC format)
+  result_2024 <- fetch_enr(2024, tidy = TRUE, use_cache = TRUE)
+  expect_true("district_id" %in% names(result_2024))
+  expect_true(length(unique(result_2024$subgroup)) >= 13)
+})
