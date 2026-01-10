@@ -16,13 +16,10 @@ Attendance Report) data, transforming it into tidy format for analysis.
 \describe{
 \item{\code{\link{fetch_enr}}}{Fetch enrollment data for a school year}
 \item{\code{\link{fetch_enr_multi}}}{Fetch enrollment data for multiple years}
-\item{\code{\link{fetch_directory}}}{Fetch school directory data for a school year}
-\item{\code{\link{fetch_directory_multi}}}{Fetch directory data for multiple years}
 \item{\code{\link{tidy_enr}}}{Transform wide data to tidy (long) format}
 \item{\code{\link{id_enr_aggs}}}{Add aggregation level flags}
 \item{\code{\link{enr_grade_aggs}}}{Create grade-level aggregations}
 \item{\code{\link{get_available_years}}}{Show available enrollment data years}
-\item{\code{\link{get_directory_years}}}{Show available directory data years}
 }
 }
 

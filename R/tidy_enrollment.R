@@ -21,6 +21,9 @@
 #' }
 tidy_enr <- function(df) {
 
+  # Declare data frame column variables for R CMD check
+  n_students <- row_total <- NULL
+
   # Invariant columns (identifiers that stay the same)
   invariants <- c(
     "end_year", "type",
@@ -152,6 +155,10 @@ tidy_enr <- function(df) {
 #' table(tidy_data$is_state, tidy_data$is_district, tidy_data$is_school)
 #' }
 id_enr_aggs <- function(df) {
+
+  # Declare data frame column variables for R CMD check
+  type <- NULL
+
   df |>
     dplyr::mutate(
       # State level: Type == "State"
@@ -186,6 +193,9 @@ id_enr_aggs <- function(df) {
 #' grade_aggs <- enr_grade_aggs(tidy_data)
 #' }
 enr_grade_aggs <- function(df) {
+
+  # Declare data frame column variables for R CMD check
+  subgroup <- grade_level <- n_students <- type <- NULL
 
   # Group by invariants (everything except grade_level and counts)
   group_vars <- c(
