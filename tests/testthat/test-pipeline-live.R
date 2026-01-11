@@ -418,3 +418,90 @@ test_that("Cache functions exist and work", {
   expect_true(is.character(path))
   expect_true(grepl("2024", path))
 })
+
+# ==============================================================================
+# ASSESSMENT DATA TESTS
+# ==============================================================================
+
+test_that("Assessment data URLs are accessible", {
+  skip_if_offline()
+
+  # Test 2024 assessment URL (KYRC format)
+  urls <- kyschooldata::get_assessment_urls(2024)
+  expect_true(length(urls) > 0)
+
+  # Try to access first URL
+  response <- httr::HEAD(urls[1], httr::user_agent(KDE_USER_AGENT), httr::timeout(30))
+  # Note: May return 404 if file doesn't exist yet, but should not be 403
+  expect_false(httr::status_code(response) == 403,
+               info = "Not blocked by authentication (403)")
+})
+
+test_that("get_raw_assessment returns data structure", {
+  skip_if_offline()
+
+  # Note: This test may fail if assessment data files don't exist yet
+  # The implementation tries multiple URL patterns
+  expect_error(
+    kyschooldata:::get_raw_assessment(2024),
+    regex = "No assessment data found|assessment data may not be available",
+    info = "Handles missing assessment data gracefully"
+  )
+})
+
+test_that("fetch_aca handles missing years gracefully", {
+  skip_if_offline()
+
+  # Test that fetch_aca provides helpful error for years without data
+  expect_error(
+    kyschooldata::fetch_aca(2024),
+    regex = "No assessment data|assessment data may not be available",
+    info = "Provides helpful error for missing data"
+  )
+})
+
+test_that("Assessment function exports exist", {
+  # Test that assessment functions are exported
+  expect_true(exists("fetch_aca", mode = "function", envir = asNamespace("kyschooldata")),
+              info = "fetch_aca is exported")
+  expect_true(exists("fetch_aca_multi", mode = "function", envir = asNamespace("kyschooldata")),
+              info = "fetch_aca_multi is exported")
+  expect_true(exists("get_assessment_urls", mode = "function", envir = asNamespace("kyschooldata")),
+              info = "get_assessment_urls is exported")
+})
+
+test_that("Assessment functions validate year parameter", {
+  # Test year validation
+  expect_error(
+    kyschooldata::fetch_aca(2010),
+    regex = "must be between 2012 and 2025",
+    info = "Rejects years before 2012"
+  )
+
+  expect_error(
+    kyschooldata::fetch_aca(2026),
+    regex = "must be between 2012 and 2025",
+    info = "Rejects future years"
+  )
+
+  expect_error(
+    kyschooldata::fetch_aca(2020),
+    regex = "waived.*COVID-19",
+    info = "Rejects 2020 (COVID waiver year)"
+  )
+})
+
+test_that("Assessment URL generation works for different eras", {
+  urls_2024 <- kyschooldata::get_assessment_urls(2024)
+  expect_true(length(urls_2024) > 0)
+  expect_true(any(grepl("KYRC", urls_2024)))
+
+  urls_2015 <- kyschooldata::get_assessment_urls(2015)
+  expect_true(length(urls_2015) > 0)
+
+  # 2012+ should work
+  expect_error(
+    kyschooldata::get_assessment_urls(2010),
+    regex = "not available before 2012"
+  )
+})

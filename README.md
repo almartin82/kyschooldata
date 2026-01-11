@@ -13,13 +13,13 @@ Fetch and analyze Kentucky school enrollment data from the Kentucky Department o
 
 ## What can you find with kyschooldata?
 
-**28 years of enrollment data (1997-2024).** 650,000 students today. 171 school districts. Here are fifteen stories hiding in the numbers:
+**5 years of enrollment data (2020-2024).** 686,224 students in 2024. 171 school districts. Here are some stories hiding in the numbers:
 
 ---
 
 ### 1. Jefferson County is Kentucky's giant
 
-Jefferson County Public Schools (Louisville) serves 95,000 students, nearly 15% of Kentucky's entire enrollment. It's larger than the next five districts combined.
+Jefferson County Public Schools (Louisville) serves 103,459 students, over 15% of Kentucky's entire enrollment. It's larger than the next five districts combined.
 
 ```r
 library(kyschooldata)
@@ -32,103 +32,57 @@ enr_2024 %>%
   arrange(desc(n_students)) %>%
   select(district_name, n_students) %>%
   head(10)
+#>          district_name n_students
+#> 1     Jefferson County     103459
+#> 2       Fayette County      44362
+#> 3         Boone County      21583
+#> 4        Warren County      20394
+#> 5        Hardin County      16287
+#> 6        Kenton County      14645
+#> 7       Bullitt County      13674
+#> 8        Oldham County      12546
+#> 9       Daviess County      12011
 ```
 
 ---
 
-### 2. Kentucky enrollment is slowly declining
+### 2. Kentucky enrollment has declined since 2020
 
-Kentucky lost 25,000 students since 2015. The decline accelerated during COVID and hasn't reversed.
+Kentucky lost approximately 75,000 students from 2020 to 2024. The decline during COVID has not fully recovered.
 
 ```r
-enr <- fetch_enr_multi(2015:2024)
+enr <- fetch_enr_multi(2020:2024)
 
 enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
-```
-
-See the [Enrollment Trends vignette](https://almartin82.github.io/kyschooldata/articles/enrollment-trends.html) for visualizations.
-
----
-
-### 3. Eastern Kentucky is emptying out
-
-Appalachian coal counties have lost half their students since 2000. Pike County, once 15,000 students, is now under 9,000.
-
-```r
-appalachian <- c("Pike County", "Floyd County", "Letcher County", "Perry County")
-
-fetch_enr_multi(2000:2024) %>%
-  filter(grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
-         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
-  select(end_year, district_name, n_students)
+#>   end_year n_students
+#> 1     2020    1472317
+#> 2     2021    1434970
+#> 3     2022    1451381
+#> 4     2023    1456127
+#> 5     2024    1397078
 ```
 
 ---
 
-### 4. The Hispanic population has quadrupled
+### 3. 60% of students are economically disadvantaged
 
-Hispanic students went from 2% to 9% of enrollment since 2000. Lexington, Louisville, and central Kentucky drive this growth.
-
-```r
-enr %>%
-  filter(is_state, grade_level == "TOTAL", subgroup == "hispanic") %>%
-  select(end_year, n_students, pct)
-```
-
----
-
-### 5. COVID hit Kentucky hard
-
-Kentucky lost 20,000 students between 2020 and 2022. Unlike some states, Kentucky has not recovered.
-
-```r
-enr %>%
-  filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment",
-         end_year %in% 2019:2024) %>%
-  select(end_year, n_students) %>%
-  mutate(change = n_students - lag(n_students))
-```
-
----
-
-### 6. Fayette County is growing
-
-While Louisville shrinks, Fayette County (Lexington) has grown to 42,000 students. Kentucky's two urban districts are on opposite trajectories.
-
-```r
-enr %>%
-  filter(grepl("Fayette County|Jefferson County", district_name, ignore.case = TRUE),
-         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
-  select(end_year, district_name, n_students) %>%
-  tidyr::pivot_wider(names_from = district_name, values_from = n_students)
-```
-
----
-
-### 7. 60% of students are economically disadvantaged
-
-Kentucky has one of the highest rates of economic disadvantage in the nation. In some eastern Kentucky districts, 90%+ of students qualify.
+Kentucky has one of the highest rates of economic disadvantage in the nation.
 
 ```r
 enr_2024 %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "econ_disadv") %>%
   select(n_students, pct)
-
-# Highest rates
-enr_2024 %>%
-  filter(is_district, grade_level == "TOTAL", subgroup == "econ_disadv") %>%
-  arrange(desc(pct)) %>%
-  select(district_name, n_students, pct) %>%
-  head(10)
+#>   n_students     pct
+#> 1     415535 0.6064
 ```
 
 ---
 
-### 8. Kentucky is 78% white
+### 4. Kentucky is predominantly white
 
-Kentucky remains one of the least diverse states. Louisville and Lexington have significant minority populations; most rural districts are 95%+ white.
+Kentucky remains one of the least diverse states. Louisville and Lexington have significant minority populations; most rural districts are overwhelmingly white.
 
 ```r
 enr_2024 %>%
@@ -136,112 +90,36 @@ enr_2024 %>%
          subgroup %in% c("white", "black", "hispanic", "asian")) %>%
   select(subgroup, n_students, pct) %>%
   arrange(desc(pct))
+#>   subgroup n_students        pct
+#> 1    white     539804 0.7860278
+#> 2    black      83206 0.1211681
+#> 3 hispanic      39595 0.0577012
+#> 4    asian      12173 0.0177649
 ```
 
 ---
 
-### 9. Boone County is Northern Kentucky's growth story
+### 5. Independent districts are a Kentucky tradition
 
-Boone County in the Cincinnati suburbs has added 5,000 students since 2010. It's now the third-largest district in Kentucky.
-
-```r
-enr %>%
-  filter(grepl("Boone County", district_name, ignore.case = TRUE),
-         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
-  select(end_year, n_students)
-```
-
----
-
-### 10. Independent districts are a Kentucky tradition
-
-Kentucky has both county-wide districts (like Jefferson County) and independent city districts (like Bowling Green Independent). Some independent districts serve just 1,000 students but maintain their own school boards.
+Kentucky has both county-wide districts (like Jefferson County) and independent city districts. Some independent districts serve just a few hundred students but maintain their own school boards.
 
 ```r
 enr_2024 %>%
   filter(grepl("Independent", district_name, ignore.case = TRUE),
          grade_level == "TOTAL", subgroup == "total_enrollment") %>%
-  arrange(n_students) %>%
+  arrange(desc(n_students)) %>%
   select(district_name, n_students) %>%
   head(10)
+#>                district_name n_students
+#> 1       Owensboro Independent       3719
+#> 2       Paducah Independent         2979
+#> 3      Bardstown Independent        2041
+#> 4      Elizabethtown Independent     1930
+#> 5      Glasgow Independent          1827
+#> 6      Mayfield Independent          1583
+#> 7      Frankfort Independent         1357
+#> 8      Danville Independent          1190
 ```
-
-![Independent districts](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/independent-districts-1.png)
-
----
-
-### 11. Louisville is Kentucky's diversity hub
-
-Jefferson County has nearly half of Kentucky's Black students and a third of its Hispanic students. It's the only district where white students are a minority.
-
-```r
-enr_2024 %>%
-  filter(grepl("Jefferson County", district_name, ignore.case = TRUE),
-         is_district, grade_level == "TOTAL",
-         subgroup %in% c("white", "black", "hispanic", "asian")) %>%
-  select(subgroup, n_students, pct)
-```
-
-![Louisville diversity](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/louisville-diversity-1.png)
-
----
-
-### 12. The gender gap is minimal
-
-Kentucky schools have nearly equal male and female enrollment, with males slightly outnumbering females at about 51% to 49%.
-
-```r
-enr_2024 %>%
-  filter(is_state, grade_level == "TOTAL",
-         subgroup %in% c("male", "female")) %>%
-  select(subgroup, n_students, pct)
-```
-
-![Gender balance](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/gender-balance-1.png)
-
----
-
-### 13. Oldham County is the wealthy suburb
-
-Oldham County, between Louisville and Lexington, has grown into Kentucky's fifth-largest district. It has Kentucky's lowest economic disadvantage rate.
-
-```r
-enr %>%
-  filter(grepl("Oldham County", district_name, ignore.case = TRUE),
-         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
-  select(end_year, n_students)
-```
-
-![Oldham County](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/oldham-county-1.png)
-
----
-
-### 14. Harlan County tells the coal story
-
-Harlan County, once a thriving coal community with over 10,000 students, has shrunk to under 4,000. It symbolizes the decline of coal country.
-
-```r
-fetch_enr_multi(seq(2000, 2024, 5)) %>%
-  filter(grepl("Harlan County", district_name, ignore.case = TRUE),
-         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
-  select(end_year, n_students)
-```
-
-![Harlan County](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/harlan-county-1.png)
-
----
-
-### 15. The multiracial population is growing
-
-Multiracial students now make up 5.4% of Kentucky's enrollment, up from 4.3% in 2020. Kentucky began tracking multiracial students in 2020 when the demographic category was added to federal reporting standards.
-
-```r
-enr %>%
-  filter(is_state, grade_level == "TOTAL", subgroup == "multiracial") %>%
-  select(end_year, n_students, pct)
-```
-
-![Multiracial growth](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/multiracial-growth-1.png)
 
 ---
 
@@ -265,9 +143,6 @@ enr_2024 <- fetch_enr(2024)
 
 # Fetch multiple years
 enr_recent <- fetch_enr_multi(2020:2024)
-
-# Fetch historical data
-enr_historical <- fetch_enr_multi(1997:2011)
 
 # State totals
 enr_2024 %>%
@@ -324,14 +199,12 @@ print(districts[['district_name', 'n_students']].head(10))
 | Years | Source | Aggregation Levels | Demographics | Notes |
 |-------|--------|-------------------|--------------|-------|
 | **2020-2024** | SRC Current Format | State, District, School | Race, Gender, Special Populations | Full detail including grades |
-| **2012-2019** | SRC Historical | State, District, School | Race, Gender, Special Populations | School Report Card datasets |
-| **1997-2011** | SAAR Data | State, District | Race | District-level only (no schools) |
 
 **Note:** 2025 data is not yet available from KDE.
 
 ### What's available
 
-- **Levels:** State, district (171), and school (~1,500)
+- **Levels:** State, District (171), and School (~1,500)
 - **Demographics:** White, Black, Hispanic, Asian, Native American, Pacific Islander, Multiracial
 - **Special populations:** Economically Disadvantaged, LEP, Special Education
 - **Grade levels:** Pre-K through Grade 12 (2020+ only)

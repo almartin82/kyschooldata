@@ -1,21 +1,26 @@
 #' kyschooldata: Fetch and Process Kentucky School Data
 #'
 #' Downloads and processes school data from the Kentucky Department of
-#' Education (KDE). Provides functions for fetching enrollment data from the
-#' School Report Card (SRC) datasets and SAAR (Superintendent's Annual
-#' Attendance Report) data, transforming it into tidy format for analysis.
+#' Education (KDE). Provides functions for fetching enrollment and assessment
+#' data from the School Report Card (SRC) datasets and SAAR (Superintendent's
+#' Annual Attendance Report) data, transforming it into tidy format for analysis.
 #'
-#' @section Main functions:
+#' @section Enrollment functions:
 #' \describe{
 #'   \item{\code{\link{fetch_enr}}}{Fetch enrollment data for a school year}
 #'   \item{\code{\link{fetch_enr_multi}}}{Fetch enrollment data for multiple years}
-#'   \item{\code{\link{fetch_directory}}}{Fetch school directory data for a school year}
-#'   \item{\code{\link{fetch_directory_multi}}}{Fetch directory data for multiple years}
 #'   \item{\code{\link{tidy_enr}}}{Transform wide data to tidy (long) format}
 #'   \item{\code{\link{id_enr_aggs}}}{Add aggregation level flags}
 #'   \item{\code{\link{enr_grade_aggs}}}{Create grade-level aggregations}
-#'   \item{\code{\link{get_available_years}}}{Show available enrollment data years}
-#'   \item{\code{\link{get_directory_years}}}{Show available directory data years}
+#' }
+#'
+#' @section Assessment functions:
+#' \describe{
+#'   \item{\code{\link{fetch_aca}}}{Fetch assessment data for a school year}
+#'   \item{\code{\link{fetch_aca_multi}}}{Fetch assessment data for multiple years}
+#'   \item{\code{\link{tidy_aca}}}{Transform wide assessment data to tidy format}
+#'   \item{\code{\link{id_assessment_aggs}}}{Add assessment aggregation levels}
+#'   \item{\code{\link{get_assessment_urls}}}{Get assessment data URLs}
 #' }
 #'
 #' @section Cache functions:
