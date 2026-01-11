@@ -21,9 +21,3 @@ Thumbs.db
 # Byte-compiled / optimized / DLL files
 *.pyc
 __pycache__/
-
-# Cache
-*.rds
-cache/
-figure/
-vignettes/*_cache/

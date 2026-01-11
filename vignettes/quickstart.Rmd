@@ -13,7 +13,8 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
   fig.width = 7,
-  fig.height = 4
+  fig.height = 4,
+  cache = TRUE
 )
 ```
 
@@ -69,7 +70,7 @@ The main function is `fetch_enr()`, which downloads and processes enrollment dat
 
 ```{r fetch-single-year}
 # Fetch 2024 enrollment data (2023-24 school year)
-enr_2024 <- fetch_enr(2024)
+enr_2024 <- fetch_enr(2024, use_cache = TRUE)
 
 # View the first few rows
 head(enr_2024)
@@ -197,7 +198,7 @@ enr_2024 %>%
 
 ```{r multi-year}
 # Fetch a range of years
-enr_recent <- fetch_enr_multi(2020:2024)
+enr_recent <- fetch_enr_multi(2020:2024, use_cache = TRUE)
 
 # View statewide trend
 enr_recent %>%
@@ -209,7 +210,7 @@ enr_recent %>%
 
 ```{r historical}
 # Fetch early years (SAAR data - district level only)
-enr_early <- fetch_enr_multi(2000:2005)
+enr_early <- fetch_enr_multi(2000:2005, use_cache = TRUE)
 
 enr_early %>%
   filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
