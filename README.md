@@ -13,7 +13,7 @@ Fetch and analyze Kentucky school enrollment data from the Kentucky Department o
 
 ## What can you find with kyschooldata?
 
-**28 years of enrollment data (1997-2024).** 650,000 students today. 171 school districts. Here are ten stories hiding in the numbers:
+**28 years of enrollment data (1997-2024).** 650,000 students today. 171 school districts. Here are fifteen stories hiding in the numbers:
 
 ---
 
@@ -165,6 +165,83 @@ enr_2024 %>%
   select(district_name, n_students) %>%
   head(10)
 ```
+
+![Independent districts](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/independent-districts-1.png)
+
+---
+
+### 11. Louisville is Kentucky's diversity hub
+
+Jefferson County has nearly half of Kentucky's Black students and a third of its Hispanic students. It's the only district where white students are a minority.
+
+```r
+enr_2024 %>%
+  filter(grepl("Jefferson County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL",
+         subgroup %in% c("white", "black", "hispanic", "asian")) %>%
+  select(subgroup, n_students, pct)
+```
+
+![Louisville diversity](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/louisville-diversity-1.png)
+
+---
+
+### 12. The gender gap is minimal
+
+Kentucky schools have nearly equal male and female enrollment, with males slightly outnumbering females at about 51% to 49%.
+
+```r
+enr_2024 %>%
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("male", "female")) %>%
+  select(subgroup, n_students, pct)
+```
+
+![Gender balance](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/gender-balance-1.png)
+
+---
+
+### 13. Oldham County is the wealthy suburb
+
+Oldham County, between Louisville and Lexington, has grown into Kentucky's fifth-largest district. It has Kentucky's lowest economic disadvantage rate.
+
+```r
+enr %>%
+  filter(grepl("Oldham County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  select(end_year, n_students)
+```
+
+![Oldham County](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/oldham-county-1.png)
+
+---
+
+### 14. Harlan County tells the coal story
+
+Harlan County, once a thriving coal community with over 10,000 students, has shrunk to under 4,000. It symbolizes the decline of coal country.
+
+```r
+fetch_enr_multi(seq(2000, 2024, 5)) %>%
+  filter(grepl("Harlan County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  select(end_year, n_students)
+```
+
+![Harlan County](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/harlan-county-1.png)
+
+---
+
+### 15. The multiracial population is growing
+
+Multiracial students now make up 5.4% of Kentucky's enrollment, up from 4.3% in 2020. Kentucky began tracking multiracial students in 2020 when the demographic category was added to federal reporting standards.
+
+```r
+enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "multiracial") %>%
+  select(end_year, n_students, pct)
+```
+
+![Multiracial growth](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/multiracial-growth-1.png)
 
 ---
 
