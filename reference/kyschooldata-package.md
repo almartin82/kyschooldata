@@ -29,7 +29,7 @@ Attendance Report) data, transforming it into tidy format for analysis.
 
 - [`get_available_years`](https://almartin82.github.io/kyschooldata/reference/get_available_years.md):
 
-  Show available data years
+  Show available enrollment data years
 
 ## Cache functions
 

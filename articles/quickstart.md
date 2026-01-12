@@ -58,7 +58,7 @@ which downloads and processes enrollment data:
 
 ``` r
 # Fetch 2024 enrollment data (2023-24 school year)
-enr_2024 <- fetch_enr(2024)
+enr_2024 <- fetch_enr(2024, use_cache = TRUE)
 
 # View the first few rows
 head(enr_2024)
@@ -268,7 +268,7 @@ enr_2024 %>%
 
 ``` r
 # Fetch a range of years
-enr_recent <- fetch_enr_multi(2020:2024)
+enr_recent <- fetch_enr_multi(2020:2024, use_cache = TRUE)
 
 # View statewide trend
 enr_recent %>%
@@ -287,7 +287,7 @@ enr_recent %>%
 
 ``` r
 # Fetch early years (SAAR data - district level only)
-enr_early <- fetch_enr_multi(2000:2005)
+enr_early <- fetch_enr_multi(2000:2005, use_cache = TRUE)
 
 enr_early %>%
   filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%

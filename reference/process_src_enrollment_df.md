@@ -12,7 +12,7 @@ process_src_enrollment_df(df, end_year, level)
 
 - df:
 
-  Raw data frame from SRC
+  Raw data frame from SRC (Kentucky-specific long format)
 
 - end_year:
 
@@ -24,4 +24,4 @@ process_src_enrollment_df(df, end_year, level)
 
 ## Value
 
-Processed data frame
+Processed data frame in wide format
