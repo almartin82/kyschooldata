@@ -33,14 +33,6 @@ reference:
   - id_enr_aggs
   - enr_grade_aggs
 
-- title: School Directory
-  desc: Functions for downloading school directory data
-  contents:
-  - fetch_directory
-  - fetch_directory_multi
-  - get_directory_url
-  - get_directory_years
-
 - title: Cache Management
   desc: Functions for managing cached data
   contents:
