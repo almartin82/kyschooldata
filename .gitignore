@@ -26,4 +26,3 @@ __pycache__/
 *.rds
 cache/
 figure/
-vignettes/*_cache/
