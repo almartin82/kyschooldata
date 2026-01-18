@@ -241,3 +241,7 @@ ggplot(state_trend, aes(x = end_year, y = n_students)) +
 - Explore the [Enrollment Trends vignette](enrollment-trends.html) for in-depth analysis with visualizations
 - See the [function reference](../reference/index.html) for detailed documentation
 - Check `?fetch_enr` for parameter details
+
+```{r session-info}
+sessionInfo()
+```
