@@ -1,8 +1,17 @@
 url: https://almartin82.github.io/kyschooldata/
 
 authors:
-  Andy Martin:
+  Al Martin:
     href: https://github.com/almartin82
+
+articles:
+  exclude:
+    - CLAUDE
+    - EXPANSION
+    - TODO
+    - PRD
+    - ASSESSMENT_STATUS
+    - ASSESSMENT-TEST-SUMMARY
 
 template:
   bootstrap: 5

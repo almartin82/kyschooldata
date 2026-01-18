@@ -11,4 +11,8 @@
 ^Meta$
 ^CLAUDE\.md$
 ^PRD\.md$
+^EXPANSION\.md$
+^TODO\.md$
+^ASSESSMENT_STATUS\.md$
+^ASSESSMENT-TEST-SUMMARY\.md$
 ^py.*schooldata$
