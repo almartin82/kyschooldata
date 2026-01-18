@@ -43,107 +43,25 @@ colors <- c("total" = "#2C3E50", "white" = "#3498DB", "black" = "#E74C3C",
 ```
 
 ```{r fetch-data, cache = TRUE}
-# Get available years
-years <- get_available_years()
-if (is.list(years)) {
-  max_year <- years$max_year
-  min_year <- years$min_year
-} else {
-  max_year <- max(years)
-  min_year <- min(years)
-}
-
-# Fetch data
-enr <- fetch_enr_multi((max_year - 9):max_year, use_cache = TRUE)
-key_years <- seq(max(min_year, 2000), max_year, by = 5)
-if (!max_year %in% key_years) key_years <- c(key_years, max_year)
-enr_long <- fetch_enr_multi(key_years, use_cache = TRUE)
-enr_current <- fetch_enr(max_year, use_cache = TRUE)
+# Fetch data for visualizations
+enr_2024 <- fetch_enr(2024, use_cache = TRUE)
+enr <- fetch_enr_multi(2020:2024, use_cache = TRUE)
 ```
 
-## 1. Kentucky enrollment is slowly declining
+## 1. Jefferson County is Kentucky's giant
 
-Kentucky lost 25,000 students since 2015. The decline accelerated during COVID and hasn't reversed.
+Jefferson County Public Schools (Louisville) serves 103,000 students, about 15% of Kentucky's entire enrollment. It's larger than the next five districts combined.
 
-```{r enrollment-decline}
-state_trend <- enr %>%
-  filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment")
-
-ggplot(state_trend, aes(x = end_year, y = n_students)) +
-  geom_line(linewidth = 1.5, color = colors["total"]) +
-  geom_point(size = 3, color = colors["total"]) +
-  scale_y_continuous(labels = comma, limits = c(0, NA)) +
-  labs(title = "Kentucky Public School Enrollment",
-       subtitle = "Lost 25,000 students since 2015",
-       x = "School Year", y = "Students") +
-  theme_readme()
+```{r story-1}
+enr_2024 %>%
+  filter(is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  arrange(desc(n_students)) %>%
+  select(district_name, n_students) %>%
+  head(10)
 ```
-
-## 2. Eastern Kentucky is emptying out
-
-Appalachian coal counties have lost half their students since 2000. Pike County, once 15,000 students, is now under 9,000.
-
-```{r appalachia-decline}
-appalachian <- c("Pike County", "Floyd County", "Letcher County", "Perry County")
-
-appalachia <- enr_long %>%
-  filter(is_district, grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
-         subgroup == "total_enrollment", grade_level == "TOTAL") %>%
-  group_by(end_year) %>%
-  summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
-
-ggplot(appalachia, aes(x = end_year, y = n_students)) +
-  geom_line(linewidth = 1.5, color = colors["total"]) +
-  geom_point(size = 3, color = colors["total"]) +
-  scale_y_continuous(labels = comma) +
-  labs(title = "Eastern Kentucky Coal Counties",
-       subtitle = "Pike, Floyd, Letcher, and Perry counties combined",
-       x = "School Year", y = "Students") +
-  theme_readme()
-```
-
-## 3. The Hispanic population has quadrupled
-
-Hispanic students went from 2% to 9% of enrollment since 2000. Lexington, Louisville, and central Kentucky drive this growth.
-
-```{r hispanic-growth}
-hispanic <- enr_long %>%
-  filter(is_state, grade_level == "TOTAL", subgroup == "hispanic")
-
-ggplot(hispanic, aes(x = end_year, y = pct * 100)) +
-  geom_line(linewidth = 1.5, color = colors["hispanic"]) +
-  geom_point(size = 3, color = colors["hispanic"]) +
-  labs(title = "Hispanic Student Population in Kentucky",
-       subtitle = "Quadrupled from 2% to 9% since 2000",
-       x = "School Year", y = "Percent of Students") +
-  theme_readme()
-```
-
-## 4. Boone County is Northern Kentucky's growth story
-
-Boone County in the Cincinnati suburbs has added 5,000 students since 2010. It's now the third-largest district in Kentucky.
-
-```{r boone-county}
-boone <- enr %>%
-  filter(is_district, grepl("Boone County", district_name, ignore.case = TRUE),
-         subgroup == "total_enrollment", grade_level == "TOTAL")
-
-ggplot(boone, aes(x = end_year, y = n_students)) +
-  geom_line(linewidth = 1.5, color = colors["total"]) +
-  geom_point(size = 3, color = colors["total"]) +
-  scale_y_continuous(labels = comma) +
-  labs(title = "Boone County - Northern Kentucky Growth",
-       subtitle = "Cincinnati suburbs driving Kentucky's growth",
-       x = "School Year", y = "Students") +
-  theme_readme()
-```
-
-## 5. Jefferson County is Kentucky's giant
-
-Jefferson County Public Schools (Louisville) serves 95,000 students, nearly 15% of Kentucky's entire enrollment. It's larger than the next five districts combined.
 
 ```{r jefferson-county}
-top_districts <- enr_current %>%
+top_districts <- enr_2024 %>%
   filter(is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   arrange(desc(n_students)) %>%
   head(10) %>%
@@ -159,9 +77,121 @@ ggplot(top_districts, aes(x = district_label, y = n_students)) +
   theme_readme()
 ```
 
-## 6. Fayette County is growing while Louisville shrinks
+## 2. Kentucky enrollment peaked in 2020
 
-While Louisville shrinks, Fayette County (Lexington) has grown to 42,000 students. Kentucky's two urban districts are on opposite trajectories.
+Kentucky had nearly 1.5 million student enrollment records in 2020. The decline since has been dramatic.
+
+```{r story-2}
+enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  select(end_year, n_students)
+```
+
+```{r enrollment-decline}
+state_trend <- enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment")
+
+ggplot(state_trend, aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.5, color = colors["total"]) +
+  geom_point(size = 3, color = colors["total"]) +
+  scale_y_continuous(labels = comma, limits = c(0, NA)) +
+  labs(title = "Kentucky Public School Enrollment",
+       subtitle = "Peaked in 2020, declining since",
+       x = "School Year", y = "Students") +
+  theme_readme()
+```
+
+## 3. Eastern Kentucky coal counties are shrinking
+
+Appalachian coal counties have seen significant enrollment declines. Pike, Floyd, Letcher, and Perry counties combined had over 22,000 students in 2020.
+
+```{r story-3}
+appalachian <- c("Pike County", "Floyd County", "Letcher County", "Perry County")
+
+fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
+  filter(grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  select(end_year, district_name, n_students)
+```
+
+```{r appalachia-decline}
+appalachia <- enr %>%
+  filter(is_district, grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
+         subgroup == "total_enrollment", grade_level == "TOTAL") %>%
+  group_by(end_year) %>%
+  summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
+
+ggplot(appalachia, aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.5, color = colors["total"]) +
+  geom_point(size = 3, color = colors["total"]) +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Eastern Kentucky Coal Counties",
+       subtitle = "Pike, Floyd, Letcher, and Perry counties combined",
+       x = "School Year", y = "Students") +
+  theme_readme()
+```
+
+## 4. Hispanic students now 10% of enrollment
+
+Hispanic students grew from 7.5% to over 10% of enrollment between 2020 and 2024. Lexington, Louisville, and central Kentucky drive this growth.
+
+```{r story-4}
+enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "hispanic") %>%
+  select(end_year, n_students, pct)
+```
+
+```{r hispanic-growth}
+hispanic <- enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "hispanic")
+
+ggplot(hispanic, aes(x = end_year, y = pct * 100)) +
+  geom_line(linewidth = 1.5, color = colors["hispanic"]) +
+  geom_point(size = 3, color = colors["hispanic"]) +
+  labs(title = "Hispanic Student Population in Kentucky",
+       subtitle = "From 7.5% to over 10% since 2020",
+       x = "School Year", y = "Percent of Students") +
+  theme_readme()
+```
+
+## 5. COVID hit Kentucky hard
+
+Kentucky lost over 37,000 students between 2020 and 2021. The state saw some recovery in 2022-2023, but 2024 brought another significant decline.
+
+```{r story-5}
+enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment",
+         end_year %in% 2020:2024) %>%
+  select(end_year, n_students) %>%
+  mutate(change = n_students - lag(n_students))
+```
+
+```{r covid-impact}
+covid_years <- enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment")
+
+ggplot(covid_years, aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.5, color = colors["total"]) +
+  geom_point(size = 3, color = colors["total"]) +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "red", alpha = 0.5) +
+  scale_y_continuous(labels = comma) +
+  labs(title = "COVID's Impact on Kentucky Enrollment",
+       subtitle = "Lost over 37,000 students in 2021, partial recovery, then another decline",
+       x = "School Year", y = "Students") +
+  theme_readme()
+```
+
+## 6. Fayette County holds steady while Louisville shrinks
+
+While Jefferson County has remained relatively stable around 103,000, Fayette County (Lexington) has held at about 44,000 students.
+
+```{r story-6}
+enr %>%
+  filter(grepl("Fayette County|Jefferson County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  select(end_year, district_name, n_students) %>%
+  tidyr::pivot_wider(names_from = district_name, values_from = n_students)
+```
 
 ```{r fayette-jefferson}
 urban <- enr %>%
@@ -173,17 +203,32 @@ ggplot(urban, aes(x = end_year, y = n_students, color = district_name)) +
   geom_point(size = 2.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Kentucky's Two Urban Giants",
-       subtitle = "Lexington growing while Louisville shrinks",
+       subtitle = "Both districts relatively stable since 2020",
        x = "School Year", y = "Students", color = "") +
   theme_readme()
 ```
 
-## 7. 60% of students are economically disadvantaged
+## 7. 62% of students are economically disadvantaged
 
-Kentucky has one of the highest rates of economic disadvantage in the nation. In some eastern Kentucky districts, 90%+ of students qualify.
+Kentucky has one of the highest rates of economic disadvantage in the nation. In some eastern Kentucky districts, over 90% of students qualify.
+
+```{r story-7a}
+enr_2024 %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "econ_disadv") %>%
+  select(n_students, pct)
+```
+
+```{r story-7b}
+# Highest rates
+enr_2024 %>%
+  filter(is_district, grade_level == "TOTAL", subgroup == "econ_disadv") %>%
+  arrange(desc(pct)) %>%
+  select(district_name, n_students, pct) %>%
+  head(10)
+```
 
 ```{r econ-disadvantage}
-econ_top <- enr_current %>%
+econ_top <- enr_2024 %>%
   filter(is_district, grade_level == "TOTAL", subgroup == "econ_disadv") %>%
   arrange(desc(pct)) %>%
   head(10) %>%
@@ -198,32 +243,20 @@ ggplot(econ_top, aes(x = district_label, y = pct * 100)) +
   theme_readme()
 ```
 
-## 8. COVID hit Kentucky hard
+## 8. Kentucky is 71% white
 
-Kentucky lost 20,000 students between 2020 and 2022. Unlike some states, Kentucky has not recovered.
+Kentucky remains one of the less diverse states. Louisville and Lexington have significant minority populations; most rural districts are 90%+ white.
 
-```{r covid-impact}
-covid_years <- enr %>%
-  filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment",
-         end_year >= 2018)
-
-ggplot(covid_years, aes(x = end_year, y = n_students)) +
-  geom_line(linewidth = 1.5, color = colors["total"]) +
-  geom_point(size = 3, color = colors["total"]) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "red", alpha = 0.5) +
-  scale_y_continuous(labels = comma) +
-  labs(title = "COVID's Impact on Kentucky Enrollment",
-       subtitle = "Lost 20,000 students and hasn't recovered",
-       x = "School Year", y = "Students") +
-  theme_readme()
+```{r story-8}
+enr_2024 %>%
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("white", "black", "hispanic", "asian")) %>%
+  select(subgroup, n_students, pct) %>%
+  arrange(desc(pct))
 ```
 
-## 9. Kentucky is 78% white
-
-Kentucky remains one of the least diverse states. Louisville and Lexington have significant minority populations; most rural districts are 95%+ white.
-
 ```{r demographics}
-demo <- enr_current %>%
+demo <- enr_2024 %>%
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) %>%
   arrange(desc(pct)) %>%
@@ -236,18 +269,53 @@ ggplot(demo, aes(x = subgroup_label, y = pct * 100)) +
                                "hispanic" = colors["hispanic"], "asian" = colors["asian"],
                                "multiracial" = "#1ABC9C")) +
   labs(title = "Kentucky Student Demographics",
-       subtitle = "State remains 78% white",
+       subtitle = "State is 71% white",
        x = "", y = "Percent of Students") +
   theme_readme() +
   theme(legend.position = "none")
 ```
 
+## 9. Boone County is Northern Kentucky's growth story
+
+Boone County in the Cincinnati suburbs has about 21,500 students. It's now the third-largest district in Kentucky.
+
+```{r story-9}
+enr %>%
+  filter(grepl("Boone County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  select(end_year, n_students)
+```
+
+```{r boone-county}
+boone <- enr %>%
+  filter(is_district, grepl("Boone County", district_name, ignore.case = TRUE),
+         subgroup == "total_enrollment", grade_level == "TOTAL")
+
+ggplot(boone, aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.5, color = colors["total"]) +
+  geom_point(size = 3, color = colors["total"]) +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Boone County - Northern Kentucky Growth",
+       subtitle = "Cincinnati suburbs with stable enrollment",
+       x = "School Year", y = "Students") +
+  theme_readme()
+```
+
 ## 10. Independent districts are a Kentucky tradition
 
-Kentucky has both county-wide districts (like Jefferson County) and independent city districts (like Bowling Green Independent). Some independent districts serve just 1,000 students but maintain their own school boards.
+Kentucky has both county-wide districts (like Jefferson County) and independent city districts (like Bowling Green Independent). Some independent districts serve just a few students.
+
+```{r story-10}
+enr_2024 %>%
+  filter(grepl("Independent", district_name, ignore.case = TRUE),
+         grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  arrange(n_students) %>%
+  select(district_name, n_students) %>%
+  head(10)
+```
 
 ```{r independent-districts}
-independent <- enr_current %>%
+independent <- enr_2024 %>%
   filter(grepl("Independent", district_name, ignore.case = TRUE),
          grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   arrange(n_students) %>%
@@ -259,24 +327,32 @@ ggplot(independent, aes(x = district_label, y = n_students)) +
   coord_flip() +
   scale_y_continuous(labels = comma) +
   labs(title = "Kentucky's Smallest Independent Districts",
-       subtitle = "Some serve just 1,000 students with their own school boards",
+       subtitle = "Some serve just a few students with their own school boards",
        x = "", y = "Students") +
   theme_readme()
 ```
 
 ## 11. Louisville is Kentucky's diversity hub
 
-Jefferson County has nearly half of Kentucky's Black students and a third of its Hispanic students. It's the only district where white students are a minority.
+Jefferson County has significant Black (36%), Hispanic (18%), and Asian (5%) populations. White students make up only 35% of enrollment in Louisville.
+
+```{r story-11}
+enr_2024 %>%
+  filter(grepl("Jefferson County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL",
+         subgroup %in% c("white", "black", "hispanic", "asian")) %>%
+  select(subgroup, n_students, pct)
+```
 
 ```{r louisville-diversity}
 # Louisville vs rest of state demographic comparison
-jefferson <- enr_current %>%
+jefferson <- enr_2024 %>%
   filter(grepl("Jefferson County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL",
          subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) %>%
   mutate(area = "Jefferson County (Louisville)")
 
-state <- enr_current %>%
+state <- enr_2024 %>%
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) %>%
   mutate(area = "Kentucky Statewide")
@@ -296,10 +372,17 @@ ggplot(compare, aes(x = subgroup, y = pct * 100, fill = area)) +
 
 ## 12. The gender gap is minimal
 
-Kentucky schools have nearly equal male and female enrollment, with males slightly outnumbering females at about 51% to 49%.
+Kentucky schools have nearly equal male and female enrollment, with males at 51.7% and females at 48.3%.
+
+```{r story-12}
+enr_2024 %>%
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("male", "female")) %>%
+  select(subgroup, n_students, pct)
+```
 
 ```{r gender-balance}
-gender <- enr_current %>%
+gender <- enr_2024 %>%
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("male", "female")) %>%
   mutate(subgroup = factor(subgroup, levels = c("male", "female")))
@@ -318,7 +401,14 @@ ggplot(gender, aes(x = subgroup, y = n_students, fill = subgroup)) +
 
 ## 13. Oldham County is the wealthy suburb
 
-Oldham County, between Louisville and Lexington, has grown into Kentucky's fifth-largest district. It has Kentucky's lowest economic disadvantage rate.
+Oldham County, between Louisville and Lexington, has about 12,500 students. It has Kentucky's lowest economic disadvantage rate.
+
+```{r story-13}
+enr %>%
+  filter(grepl("Oldham County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  select(end_year, n_students)
+```
 
 ```{r oldham-county}
 oldham <- enr %>%
@@ -330,17 +420,24 @@ ggplot(oldham, aes(x = end_year, y = n_students)) +
   geom_point(size = 3, color = colors["asian"]) +
   scale_y_continuous(labels = comma) +
   labs(title = "Oldham County - The Wealthy Suburb",
-       subtitle = "Growing rapidly between Louisville and Lexington",
+       subtitle = "Stable enrollment between Louisville and Lexington",
        x = "School Year", y = "Students") +
   theme_readme()
 ```
 
 ## 14. Harlan County tells the coal story
 
-Harlan County, once a thriving coal community with over 10,000 students, has shrunk to under 4,000. It symbolizes the decline of coal country.
+Harlan County had about 4,100 students in 2020. The county symbolizes the decline of coal country in eastern Kentucky.
+
+```{r story-14}
+fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
+  filter(grepl("Harlan County", district_name, ignore.case = TRUE),
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+  select(end_year, n_students)
+```
 
 ```{r harlan-county}
-harlan <- enr_long %>%
+harlan <- enr %>%
   filter(is_district, grepl("Harlan County", district_name, ignore.case = TRUE),
          subgroup == "total_enrollment", grade_level == "TOTAL")
 
@@ -349,14 +446,20 @@ ggplot(harlan, aes(x = end_year, y = n_students)) +
   geom_point(size = 3, color = colors["black"]) +
   scale_y_continuous(labels = comma) +
   labs(title = "Harlan County - The Coal Story",
-       subtitle = "From coal boom to population decline",
+       subtitle = "Enrollment in decline with coal country",
        x = "School Year", y = "Students") +
   theme_readme()
 ```
 
 ## 15. The multiracial population is growing
 
-Multiracial students now make up 5.4% of Kentucky's enrollment, up from 4.3% in 2020. Kentucky began tracking multiracial students in 2020 when the demographic category was added to federal reporting standards.
+Multiracial students now make up 5.4% of Kentucky's enrollment, up from 4.3% in 2020.
+
+```{r story-15}
+enr %>%
+  filter(is_state, grade_level == "TOTAL", subgroup == "multiracial") %>%
+  select(end_year, n_students, pct)
+```
 
 ```{r multiracial-growth}
 multiracial <- enr %>%
