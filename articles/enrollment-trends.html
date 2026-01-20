@@ -84,111 +84,34 @@
 <span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"total"</span> <span class="op">=</span> <span class="st">"#2C3E50"</span>, <span class="st">"white"</span> <span class="op">=</span> <span class="st">"#3498DB"</span>, <span class="st">"black"</span> <span class="op">=</span> <span class="st">"#E74C3C"</span>,</span>
 <span>            <span class="st">"hispanic"</span> <span class="op">=</span> <span class="st">"#F39C12"</span>, <span class="st">"asian"</span> <span class="op">=</span> <span class="st">"#9B59B6"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get available years</span></span>
-<span><span class="va">years</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_available_years.html">get_available_years</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">is.list</a></span><span class="op">(</span><span class="va">years</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">max_year</span> <span class="op">&lt;-</span> <span class="va">years</span><span class="op">$</span><span class="va">max_year</span></span>
-<span>  <span class="va">min_year</span> <span class="op">&lt;-</span> <span class="va">years</span><span class="op">$</span><span class="va">min_year</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">max_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">years</span><span class="op">)</span></span>
-<span>  <span class="va">min_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">years</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Fetch data</span></span>
-<span><span class="va">enr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="op">(</span><span class="va">max_year</span> <span class="op">-</span> <span class="fl">9</span><span class="op">)</span><span class="op">:</span><span class="va">max_year</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">key_years</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">min_year</span>, <span class="fl">2000</span><span class="op">)</span>, <span class="va">max_year</span>, by <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">max_year</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">key_years</span><span class="op">)</span> <span class="va">key_years</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">key_years</span>, <span class="va">max_year</span><span class="op">)</span></span>
-<span><span class="va">enr_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="va">key_years</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">enr_current</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="va">max_year</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Fetch data for visualizations</span></span>
+<span><span class="va">enr_2024</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2024</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">enr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">:</span><span class="fl">2024</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
-<h2 id="kentucky-enrollment-is-slowly-declining">1. Kentucky enrollment is slowly declining<a class="anchor" aria-label="anchor" href="#kentucky-enrollment-is-slowly-declining"></a>
+<h2 id="jefferson-county-is-kentuckys-giant">1. Jefferson County is Kentucky’s giant<a class="anchor" aria-label="anchor" href="#jefferson-county-is-kentuckys-giant"></a>
 </h2>
-<p>Kentucky lost 25,000 students since 2015. The decline accelerated
-during COVID and hasn’t reversed.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">state_trend</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">state_trend</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Kentucky Public School Enrollment"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Lost 25,000 students since 2015"</span>,</span>
-<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enrollment-trends_files/figure-html/enrollment-decline-1.png" class="r-plt" alt="" width="100%"></p>
-</div>
-<div class="section level2">
-<h2 id="eastern-kentucky-is-emptying-out">2. Eastern Kentucky is emptying out<a class="anchor" aria-label="anchor" href="#eastern-kentucky-is-emptying-out"></a>
-</h2>
-<p>Appalachian coal counties have lost half their students since 2000.
-Pike County, once 15,000 students, is now under 9,000.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">appalachian</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Pike County"</span>, <span class="st">"Floyd County"</span>, <span class="st">"Letcher County"</span>, <span class="st">"Perry County"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">appalachia</span> <span class="op">&lt;-</span> <span class="va">enr_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">appalachian</span>, collapse <span class="op">=</span> <span class="st">"|"</span><span class="op">)</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">end_year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>n_students <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_students</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">appalachia</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Eastern Kentucky Coal Counties"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Pike, Floyd, Letcher, and Perry counties combined"</span>,</span>
-<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enrollment-trends_files/figure-html/appalachia-decline-1.png" class="r-plt" alt="" width="100%"></p>
-</div>
-<div class="section level2">
-<h2 id="the-hispanic-population-has-quadrupled">3. The Hispanic population has quadrupled<a class="anchor" aria-label="anchor" href="#the-hispanic-population-has-quadrupled"></a>
-</h2>
-<p>Hispanic students went from 2% to 9% of enrollment since 2000.
-Lexington, Louisville, and central Kentucky drive this growth.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hispanic</span> <span class="op">&lt;-</span> <span class="va">enr_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"hispanic"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">hispanic</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">pct</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"hispanic"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"hispanic"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Hispanic Student Population in Kentucky"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Quadrupled from 2% to 9% since 2000"</span>,</span>
-<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Percent of Students"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enrollment-trends_files/figure-html/hispanic-growth-1.png" class="r-plt" alt="" width="100%"></p>
-</div>
-<div class="section level2">
-<h2 id="boone-county-is-northern-kentuckys-growth-story">4. Boone County is Northern Kentucky’s growth story<a class="anchor" aria-label="anchor" href="#boone-county-is-northern-kentuckys-growth-story"></a>
-</h2>
-<p>Boone County in the Cincinnati suburbs has added 5,000 students since
-2010. It’s now the third-largest district in Kentucky.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">boone</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Boone County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">boone</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Boone County - Northern Kentucky Growth"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Cincinnati suburbs driving Kentucky's growth"</span>,</span>
-<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enrollment-trends_files/figure-html/boone-county-1.png" class="r-plt" alt="" width="100%"></p>
-</div>
-<div class="section level2">
-<h2 id="jefferson-county-is-kentuckys-giant">5. Jefferson County is Kentucky’s giant<a class="anchor" aria-label="anchor" href="#jefferson-county-is-kentuckys-giant"></a>
-</h2>
-<p>Jefferson County Public Schools (Louisville) serves 95,000 students,
-nearly 15% of Kentucky’s entire enrollment. It’s larger than the next
+<p>Jefferson County Public Schools (Louisville) serves 103,000 students,
+about 15% of Kentucky’s entire enrollment. It’s larger than the next
 five districts combined.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">top_districts</span> <span class="op">&lt;-</span> <span class="va">enr_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       district_name n_students</span></span>
+<span><span class="co">#&gt; 1     All Districts     686224</span></span>
+<span><span class="co">#&gt; 2  Jefferson County     103459</span></span>
+<span><span class="co">#&gt; 3    Fayette County      44362</span></span>
+<span><span class="co">#&gt; 4      Boone County      21583</span></span>
+<span><span class="co">#&gt; 5     Warren County      20394</span></span>
+<span><span class="co">#&gt; 6     Hardin County      16287</span></span>
+<span><span class="co">#&gt; 7     Kenton County      14645</span></span>
+<span><span class="co">#&gt; 8    Bullitt County      13674</span></span>
+<span><span class="co">#&gt; 9     Oldham County      12546</span></span>
+<span><span class="co">#&gt; 10   Daviess County      12011</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">top_districts</span> <span class="op">&lt;-</span> <span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -205,12 +128,167 @@ five districts combined.</p>
 <p><img src="enrollment-trends_files/figure-html/jefferson-county-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
-<h2 id="fayette-county-is-growing-while-louisville-shrinks">6. Fayette County is growing while Louisville shrinks<a class="anchor" aria-label="anchor" href="#fayette-county-is-growing-while-louisville-shrinks"></a>
+<h2 id="kentucky-enrollment-peaked-in-2020">2. Kentucky enrollment peaked in 2020<a class="anchor" aria-label="anchor" href="#kentucky-enrollment-peaked-in-2020"></a>
 </h2>
-<p>While Louisville shrinks, Fayette County (Lexington) has grown to
-42,000 students. Kentucky’s two urban districts are on opposite
-trajectories.</p>
+<p>Kentucky had nearly 1.5 million student enrollment records in 2020.
+The decline since has been dramatic.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   end_year n_students</span></span>
+<span><span class="co">#&gt; 1     2020    1472317</span></span>
+<span><span class="co">#&gt; 2     2021    1434970</span></span>
+<span><span class="co">#&gt; 3     2022    1451381</span></span>
+<span><span class="co">#&gt; 4     2023    1456127</span></span>
+<span><span class="co">#&gt; 5     2024    1397078</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">state_trend</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">state_trend</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Kentucky Public School Enrollment"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Peaked in 2020, declining since"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="enrollment-trends_files/figure-html/enrollment-decline-1.png" class="r-plt" alt="" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="eastern-kentucky-coal-counties-are-shrinking">3. Eastern Kentucky coal counties are shrinking<a class="anchor" aria-label="anchor" href="#eastern-kentucky-coal-counties-are-shrinking"></a>
+</h2>
+<p>Appalachian coal counties have seen significant enrollment declines.
+Pike, Floyd, Letcher, and Perry counties combined had over 22,000
+students in 2020.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">appalachian</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Pike County"</span>, <span class="st">"Floyd County"</span>, <span class="st">"Letcher County"</span>, <span class="st">"Perry County"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">:</span><span class="fl">2024</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">appalachian</span>, collapse <span class="op">=</span> <span class="st">"|"</span><span class="op">)</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    end_year  district_name n_students</span></span>
+<span><span class="co">#&gt; 1      2020   Floyd County       6092</span></span>
+<span><span class="co">#&gt; 2      2020 Letcher County       3119</span></span>
+<span><span class="co">#&gt; 3      2020   Perry County       4341</span></span>
+<span><span class="co">#&gt; 4      2020    Pike County       8770</span></span>
+<span><span class="co">#&gt; 5      2021   Floyd County       5947</span></span>
+<span><span class="co">#&gt; 6      2021 Letcher County       3091</span></span>
+<span><span class="co">#&gt; 7      2021   Perry County       4140</span></span>
+<span><span class="co">#&gt; 8      2021    Pike County       8457</span></span>
+<span><span class="co">#&gt; 9      2022   Floyd County       5889</span></span>
+<span><span class="co">#&gt; 10     2022 Letcher County       2990</span></span>
+<span><span class="co">#&gt; 11     2022   Perry County       3958</span></span>
+<span><span class="co">#&gt; 12     2022    Pike County       8245</span></span>
+<span><span class="co">#&gt; 13     2023   Floyd County       5877</span></span>
+<span><span class="co">#&gt; 14     2023 Letcher County       2706</span></span>
+<span><span class="co">#&gt; 15     2023   Perry County       3868</span></span>
+<span><span class="co">#&gt; 16     2023    Pike County       8197</span></span>
+<span><span class="co">#&gt; 17     2024   Floyd County       5762</span></span>
+<span><span class="co">#&gt; 18     2024 Letcher County       2611</span></span>
+<span><span class="co">#&gt; 19     2024   Perry County       3783</span></span>
+<span><span class="co">#&gt; 20     2024    Pike County       8044</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">appalachia</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">appalachian</span>, collapse <span class="op">=</span> <span class="st">"|"</span><span class="op">)</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">end_year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>n_students <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_students</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">appalachia</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Eastern Kentucky Coal Counties"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Pike, Floyd, Letcher, and Perry counties combined"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="enrollment-trends_files/figure-html/appalachia-decline-1.png" class="r-plt" alt="" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="hispanic-students-now-10-of-enrollment">4. Hispanic students now 10% of enrollment<a class="anchor" aria-label="anchor" href="#hispanic-students-now-10-of-enrollment"></a>
+</h2>
+<p>Hispanic students grew from 7.5% to over 10% of enrollment between
+2020 and 2024. Lexington, Louisville, and central Kentucky drive this
+growth.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"hispanic"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   end_year n_students        pct</span></span>
+<span><span class="co">#&gt; 1     2020     110575 0.07510271</span></span>
+<span><span class="co">#&gt; 2     2021     112828 0.07862743</span></span>
+<span><span class="co">#&gt; 3     2022     121423 0.08366032</span></span>
+<span><span class="co">#&gt; 4     2023     131865 0.09055872</span></span>
+<span><span class="co">#&gt; 5     2024     141735 0.10145103</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hispanic</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"hispanic"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">hispanic</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">pct</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"hispanic"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"hispanic"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Hispanic Student Population in Kentucky"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"From 7.5% to over 10% since 2020"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Percent of Students"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="enrollment-trends_files/figure-html/hispanic-growth-1.png" class="r-plt" alt="" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="covid-hit-kentucky-hard">5. COVID hit Kentucky hard<a class="anchor" aria-label="anchor" href="#covid-hit-kentucky-hard"></a>
+</h2>
+<p>Kentucky lost over 37,000 students between 2020 and 2021. The state
+saw some recovery in 2022-2023, but 2024 brought another significant
+decline.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>,</span>
+<span>         <span class="va">end_year</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">2020</span><span class="op">:</span><span class="fl">2024</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>change <span class="op">=</span> <span class="va">n_students</span> <span class="op">-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/lead-lag.html" class="external-link">lag</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   end_year n_students change</span></span>
+<span><span class="co">#&gt; 1     2020    1472317     NA</span></span>
+<span><span class="co">#&gt; 2     2021    1434970 -37347</span></span>
+<span><span class="co">#&gt; 3     2022    1451381  16411</span></span>
+<span><span class="co">#&gt; 4     2023    1456127   4746</span></span>
+<span><span class="co">#&gt; 5     2024    1397078 -59049</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">covid_years</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">covid_years</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">2020</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"red"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"COVID's Impact on Kentucky Enrollment"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Lost over 37,000 students in 2021, partial recovery, then another decline"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="enrollment-trends_files/figure-html/covid-impact-1.png" class="r-plt" alt="" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="fayette-county-holds-steady-while-louisville-shrinks">6. Fayette County holds steady while Louisville shrinks<a class="anchor" aria-label="anchor" href="#fayette-county-holds-steady-while-louisville-shrinks"></a>
+</h2>
+<p>While Jefferson County has remained relatively stable around 103,000,
+Fayette County (Lexington) has held at about 44,000 students.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Fayette County|Jefferson County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">district_name</span>, values_from <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 3</span></span></span>
+<span><span class="co">#&gt;   end_year `Fayette County` `Jefferson County`</span></span>
+<span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     <span style="text-decoration: underline;">2</span>020            <span style="text-decoration: underline;">44</span>472             <span style="text-decoration: underline;">103</span>876</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     <span style="text-decoration: underline;">2</span>021            <span style="text-decoration: underline;">43</span>182             <span style="text-decoration: underline;">101</span>678</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     <span style="text-decoration: underline;">2</span>022            <span style="text-decoration: underline;">43</span>849             <span style="text-decoration: underline;">102</span>204</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     <span style="text-decoration: underline;">2</span>023            <span style="text-decoration: underline;">43</span>799             <span style="text-decoration: underline;">103</span>432</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     <span style="text-decoration: underline;">2</span>024            <span style="text-decoration: underline;">44</span>362             <span style="text-decoration: underline;">103</span>459</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">urban</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Fayette County|Jefferson County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>         <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span></span>
@@ -220,19 +298,43 @@ trajectories.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Kentucky's Two Urban Giants"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Lexington growing while Louisville shrinks"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Both districts relatively stable since 2020"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span>, color <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enrollment-trends_files/figure-html/fayette-jefferson-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
-<h2 id="of-students-are-economically-disadvantaged">7. 60% of students are economically disadvantaged<a class="anchor" aria-label="anchor" href="#of-students-are-economically-disadvantaged"></a>
+<h2 id="of-students-are-economically-disadvantaged">7. 62% of students are economically disadvantaged<a class="anchor" aria-label="anchor" href="#of-students-are-economically-disadvantaged"></a>
 </h2>
 <p>Kentucky has one of the highest rates of economic disadvantage in the
-nation. In some eastern Kentucky districts, 90%+ of students
+nation. In some eastern Kentucky districts, over 90% of students
 qualify.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">econ_top</span> <span class="op">&lt;-</span> <span class="va">enr_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"econ_disadv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   n_students       pct</span></span>
+<span><span class="co">#&gt; 1     869325 0.6222451</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Highest rates</span></span>
+<span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"econ_disadv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pct</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            district_name n_students       pct</span></span>
+<span><span class="co">#&gt; 1     Fulton Independent        318 0.9325513</span></span>
+<span><span class="co">#&gt; 2  Covington Independent       3693 0.9089343</span></span>
+<span><span class="co">#&gt; 3    Newport Independent       1595 0.9083144</span></span>
+<span><span class="co">#&gt; 4     Dayton Independent        820 0.8807734</span></span>
+<span><span class="co">#&gt; 5   Fairview Independent        507 0.8711340</span></span>
+<span><span class="co">#&gt; 6             Lee County        831 0.8629283</span></span>
+<span><span class="co">#&gt; 7          Harlan County       3156 0.8590093</span></span>
+<span><span class="co">#&gt; 8        McCreary County       2491 0.8551322</span></span>
+<span><span class="co">#&gt; 9            Bell County       2202 0.8334595</span></span>
+<span><span class="co">#&gt; 10 Pineville Independent        532 0.8325509</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">econ_top</span> <span class="op">&lt;-</span> <span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"econ_disadv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pct</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -248,34 +350,24 @@ qualify.</p>
 <p><img src="enrollment-trends_files/figure-html/econ-disadvantage-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
-<h2 id="covid-hit-kentucky-hard">8. COVID hit Kentucky hard<a class="anchor" aria-label="anchor" href="#covid-hit-kentucky-hard"></a>
+<h2 id="kentucky-is-71-white">8. Kentucky is 71% white<a class="anchor" aria-label="anchor" href="#kentucky-is-71-white"></a>
 </h2>
-<p>Kentucky lost 20,000 students between 2020 and 2022. Unlike some
-states, Kentucky has not recovered.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">covid_years</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>,</span>
-<span>         <span class="va">end_year</span> <span class="op">&gt;=</span> <span class="fl">2018</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">covid_years</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">2020</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"red"</span>, alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"COVID's Impact on Kentucky Enrollment"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Lost 20,000 students and hasn't recovered"</span>,</span>
-<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="enrollment-trends_files/figure-html/covid-impact-1.png" class="r-plt" alt="" width="100%"></p>
-</div>
-<div class="section level2">
-<h2 id="kentucky-is-78-white">9. Kentucky is 78% white<a class="anchor" aria-label="anchor" href="#kentucky-is-78-white"></a>
-</h2>
-<p>Kentucky remains one of the least diverse states. Louisville and
+<p>Kentucky remains one of the less diverse states. Louisville and
 Lexington have significant minority populations; most rural districts
-are 95%+ white.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="va">enr_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+are 90%+ white.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
+<span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"black"</span>, <span class="st">"hispanic"</span>, <span class="st">"asian"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subgroup</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pct</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   subgroup n_students        pct</span></span>
+<span><span class="co">#&gt; 1    white     994258 0.71166964</span></span>
+<span><span class="co">#&gt; 2    black     152218 0.10895455</span></span>
+<span><span class="co">#&gt; 3 hispanic     141735 0.10145103</span></span>
+<span><span class="co">#&gt; 4    asian      29203 0.02090291</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
 <span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"black"</span>, <span class="st">"hispanic"</span>, <span class="st">"asian"</span>, <span class="st">"multiracial"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pct</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -288,21 +380,70 @@ are 95%+ white.</p>
 <span>                               <span class="st">"hispanic"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"hispanic"</span><span class="op">]</span>, <span class="st">"asian"</span> <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"asian"</span><span class="op">]</span>,</span>
 <span>                               <span class="st">"multiracial"</span> <span class="op">=</span> <span class="st">"#1ABC9C"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Kentucky Student Demographics"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"State remains 78% white"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"State is 71% white"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">"Percent of Students"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enrollment-trends_files/figure-html/demographics-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
+<h2 id="boone-county-is-northern-kentuckys-growth-story">9. Boone County is Northern Kentucky’s growth story<a class="anchor" aria-label="anchor" href="#boone-county-is-northern-kentuckys-growth-story"></a>
+</h2>
+<p>Boone County in the Cincinnati suburbs has about 21,500 students.
+It’s now the third-largest district in Kentucky.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Boone County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   end_year n_students</span></span>
+<span><span class="co">#&gt; 1     2020      21935</span></span>
+<span><span class="co">#&gt; 2     2021      21483</span></span>
+<span><span class="co">#&gt; 3     2022      21432</span></span>
+<span><span class="co">#&gt; 4     2023      21384</span></span>
+<span><span class="co">#&gt; 5     2023       1055</span></span>
+<span><span class="co">#&gt; 6     2024      21583</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">boone</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Boone County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">boone</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">end_year</span>, y <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.5</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"total"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Boone County - Northern Kentucky Growth"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Cincinnati suburbs with stable enrollment"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="enrollment-trends_files/figure-html/boone-county-1.png" class="r-plt" alt="" width="100%"></p>
+</div>
+<div class="section level2">
 <h2 id="independent-districts-are-a-kentucky-tradition">10. Independent districts are a Kentucky tradition<a class="anchor" aria-label="anchor" href="#independent-districts-are-a-kentucky-tradition"></a>
 </h2>
 <p>Kentucky has both county-wide districts (like Jefferson County) and
 independent city districts (like Bowling Green Independent). Some
-independent districts serve just 1,000 students but maintain their own
-school boards.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">independent</span> <span class="op">&lt;-</span> <span class="va">enr_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+independent districts serve just a few students.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Independent"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                       district_name n_students</span></span>
+<span><span class="co">#&gt; 1                Dayton Independent          2</span></span>
+<span><span class="co">#&gt; 2          Barbourville Independent          4</span></span>
+<span><span class="co">#&gt; 3             Frankfort Independent         25</span></span>
+<span><span class="co">#&gt; 4  Raceland-Worthington Independent         25</span></span>
+<span><span class="co">#&gt; 5           Middlesboro Independent         32</span></span>
+<span><span class="co">#&gt; 6        Campbellsville Independent         33</span></span>
+<span><span class="co">#&gt; 7               Russell Independent         34</span></span>
+<span><span class="co">#&gt; 8             Covington Independent         35</span></span>
+<span><span class="co">#&gt; 9         Elizabethtown Independent         38</span></span>
+<span><span class="co">#&gt; 10          Middlesboro Independent         46</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">independent</span> <span class="op">&lt;-</span> <span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Independent"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>         <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -314,7 +455,7 @@ school boards.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Kentucky's Smallest Independent Districts"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Some serve just 1,000 students with their own school boards"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Some serve just a few students with their own school boards"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enrollment-trends_files/figure-html/independent-districts-1.png" class="r-plt" alt="" width="100%"></p>
@@ -322,18 +463,29 @@ school boards.</p>
 <div class="section level2">
 <h2 id="louisville-is-kentuckys-diversity-hub">11. Louisville is Kentucky’s diversity hub<a class="anchor" aria-label="anchor" href="#louisville-is-kentuckys-diversity-hub"></a>
 </h2>
-<p>Jefferson County has nearly half of Kentucky’s Black students and a
-third of its Hispanic students. It’s the only district where white
-students are a minority.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>Jefferson County has significant Black (36%), Hispanic (18%), and
+Asian (5%) populations. White students make up only 35% of enrollment in
+Louisville.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Jefferson County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
+<span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"black"</span>, <span class="st">"hispanic"</span>, <span class="st">"asian"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subgroup</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   subgroup n_students        pct</span></span>
+<span><span class="co">#&gt; 1    white      35817 0.34619511</span></span>
+<span><span class="co">#&gt; 2    black      37106 0.35865415</span></span>
+<span><span class="co">#&gt; 3 hispanic      18993 0.18357997</span></span>
+<span><span class="co">#&gt; 4    asian       5103 0.04932389</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Louisville vs rest of state demographic comparison</span></span>
-<span><span class="va">jefferson</span> <span class="op">&lt;-</span> <span class="va">enr_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">jefferson</span> <span class="op">&lt;-</span> <span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Jefferson County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>         <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
 <span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"black"</span>, <span class="st">"hispanic"</span>, <span class="st">"asian"</span>, <span class="st">"multiracial"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"Jefferson County (Louisville)"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">state</span> <span class="op">&lt;-</span> <span class="va">enr_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">state</span> <span class="op">&lt;-</span> <span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
 <span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"black"</span>, <span class="st">"hispanic"</span>, <span class="st">"asian"</span>, <span class="st">"multiracial"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>area <span class="op">=</span> <span class="st">"Kentucky Statewide"</span><span class="op">)</span></span>
@@ -355,9 +507,17 @@ students are a minority.</p>
 <h2 id="the-gender-gap-is-minimal">12. The gender gap is minimal<a class="anchor" aria-label="anchor" href="#the-gender-gap-is-minimal"></a>
 </h2>
 <p>Kentucky schools have nearly equal male and female enrollment, with
-males slightly outnumbering females at about 51% to 49%.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gender</span> <span class="op">&lt;-</span> <span class="va">enr_current</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+males at 51.7% and females at 48.3%.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
+<span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"male"</span>, <span class="st">"female"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subgroup</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   subgroup n_students       pct</span></span>
+<span><span class="co">#&gt; 1     male     722622 0.5172381</span></span>
+<span><span class="co">#&gt; 2   female     674456 0.4827619</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gender</span> <span class="op">&lt;-</span> <span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
 <span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"male"</span>, <span class="st">"female"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>subgroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">subgroup</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"male"</span>, <span class="st">"female"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -377,10 +537,22 @@ males slightly outnumbering females at about 51% to 49%.</p>
 <div class="section level2">
 <h2 id="oldham-county-is-the-wealthy-suburb">13. Oldham County is the wealthy suburb<a class="anchor" aria-label="anchor" href="#oldham-county-is-the-wealthy-suburb"></a>
 </h2>
-<p>Oldham County, between Louisville and Lexington, has grown into
-Kentucky’s fifth-largest district. It has Kentucky’s lowest economic
-disadvantage rate.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<p>Oldham County, between Louisville and Lexington, has about 12,500
+students. It has Kentucky’s lowest economic disadvantage rate.</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Oldham County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   end_year n_students</span></span>
+<span><span class="co">#&gt; 1     2020      13171</span></span>
+<span><span class="co">#&gt; 2     2021      12910</span></span>
+<span><span class="co">#&gt; 3     2022      12875</span></span>
+<span><span class="co">#&gt; 4     2022       1002</span></span>
+<span><span class="co">#&gt; 5     2023      12792</span></span>
+<span><span class="co">#&gt; 6     2023       1142</span></span>
+<span><span class="co">#&gt; 7     2024      12546</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">oldham</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Oldham County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span></span>
@@ -390,7 +562,7 @@ disadvantage rate.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"asian"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Oldham County - The Wealthy Suburb"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"Growing rapidly between Louisville and Lexington"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Stable enrollment between Louisville and Lexington"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enrollment-trends_files/figure-html/oldham-county-1.png" class="r-plt" alt="" width="100%"></p>
@@ -398,11 +570,21 @@ disadvantage rate.</p>
 <div class="section level2">
 <h2 id="harlan-county-tells-the-coal-story">14. Harlan County tells the coal story<a class="anchor" aria-label="anchor" href="#harlan-county-tells-the-coal-story"></a>
 </h2>
-<p>Harlan County, once a thriving coal community with over 10,000
-students, has shrunk to under 4,000. It symbolizes the decline of coal
-country.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">harlan</span> <span class="op">&lt;-</span> <span class="va">enr_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<p>Harlan County had about 4,100 students in 2020. The county symbolizes
+the decline of coal country in eastern Kentucky.</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">:</span><span class="fl">2024</span>, use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Harlan County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>         <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   end_year n_students</span></span>
+<span><span class="co">#&gt; 1     2020       4096</span></span>
+<span><span class="co">#&gt; 2     2021       3957</span></span>
+<span><span class="co">#&gt; 3     2022       3827</span></span>
+<span><span class="co">#&gt; 4     2023       3764</span></span>
+<span><span class="co">#&gt; 5     2024       3674</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">harlan</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Harlan County"</span>, <span class="va">district_name</span>, ignore.case <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span></span>
 <span></span>
@@ -411,7 +593,7 @@ country.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, color <span class="op">=</span> <span class="va">colors</span><span class="op">[</span><span class="st">"black"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="va">comma</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Harlan County - The Coal Story"</span>,</span>
-<span>       subtitle <span class="op">=</span> <span class="st">"From coal boom to population decline"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Enrollment in decline with coal country"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enrollment-trends_files/figure-html/harlan-county-1.png" class="r-plt" alt="" width="100%"></p>
@@ -420,10 +602,18 @@ country.</p>
 <h2 id="the-multiracial-population-is-growing">15. The multiracial population is growing<a class="anchor" aria-label="anchor" href="#the-multiracial-population-is-growing"></a>
 </h2>
 <p>Multiracial students now make up 5.4% of Kentucky’s enrollment, up
-from 4.3% in 2020. Kentucky began tracking multiracial students in 2020
-when the demographic category was added to federal reporting
-standards.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+from 4.3% in 2020.</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"multiracial"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   end_year n_students        pct</span></span>
+<span><span class="co">#&gt; 1     2020      63077 0.04284200</span></span>
+<span><span class="co">#&gt; 2     2021      66279 0.04618842</span></span>
+<span><span class="co">#&gt; 3     2022      70157 0.04833810</span></span>
+<span><span class="co">#&gt; 4     2023      73858 0.05072222</span></span>
+<span><span class="co">#&gt; 5     2024      75010 0.05369063</span></span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiracial</span> <span class="op">&lt;-</span> <span class="va">enr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"multiracial"</span><span class="op">)</span></span>
 <span></span>
@@ -436,7 +626,7 @@ standards.</p>
 <span>       x <span class="op">=</span> <span class="st">"School Year"</span>, y <span class="op">=</span> <span class="st">"Students"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_readme</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="enrollment-trends_files/figure-html/multiracial-growth-1.png" class="r-plt" alt="" width="100%"></p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.5.2 (2025-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
@@ -463,19 +653,19 @@ standards.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] bit_4.6.0          gtable_0.3.6       jsonlite_2.0.0     crayon_1.5.3      </span></span>
-<span><span class="co">#&gt;  [5] compiler_4.5.2     tidyselect_1.2.1   parallel_4.5.2     jquerylib_0.1.4   </span></span>
-<span><span class="co">#&gt;  [9] systemfonts_1.3.1  textshaping_1.0.4  readxl_1.4.5       yaml_2.3.12       </span></span>
+<span><span class="co">#&gt;  [5] compiler_4.5.2     tidyselect_1.2.1   parallel_4.5.2     tidyr_1.3.2       </span></span>
+<span><span class="co">#&gt;  [9] jquerylib_0.1.4    systemfonts_1.3.1  textshaping_1.0.4  yaml_2.3.12       </span></span>
 <span><span class="co">#&gt; [13] fastmap_1.2.0      readr_2.1.6        R6_2.6.1           labeling_0.4.3    </span></span>
 <span><span class="co">#&gt; [17] generics_0.1.4     curl_7.0.0         knitr_1.51         tibble_3.3.1      </span></span>
 <span><span class="co">#&gt; [21] desc_1.4.3         tzdb_0.5.0         bslib_0.9.0        pillar_1.11.1     </span></span>
-<span><span class="co">#&gt; [25] RColorBrewer_1.1-3 rlang_1.1.7        cachem_1.1.0       xfun_0.55         </span></span>
+<span><span class="co">#&gt; [25] RColorBrewer_1.1-3 rlang_1.1.7        cachem_1.1.0       xfun_0.56         </span></span>
 <span><span class="co">#&gt; [29] fs_1.6.6           sass_0.4.10        S7_0.2.1           bit64_4.6.0-1     </span></span>
 <span><span class="co">#&gt; [33] cli_3.6.5          pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.4    </span></span>
 <span><span class="co">#&gt; [37] digest_0.6.39      grid_4.5.2         vroom_1.6.7        hms_1.1.4         </span></span>
 <span><span class="co">#&gt; [41] rappdirs_0.3.4     lifecycle_1.0.5    vctrs_0.7.0        evaluate_1.0.5    </span></span>
-<span><span class="co">#&gt; [45] glue_1.8.0         cellranger_1.1.0   farver_2.1.2       codetools_0.2-20  </span></span>
-<span><span class="co">#&gt; [49] ragg_1.5.0         httr_1.4.7         rmarkdown_2.30     purrr_1.2.1       </span></span>
-<span><span class="co">#&gt; [53] tools_4.5.2        pkgconfig_2.0.3    htmltools_0.5.9</span></span></code></pre></div>
+<span><span class="co">#&gt; [45] glue_1.8.0         farver_2.1.2       codetools_0.2-20   ragg_1.5.0        </span></span>
+<span><span class="co">#&gt; [49] purrr_1.2.1        rmarkdown_2.30     httr_1.4.7         tools_4.5.2       </span></span>
+<span><span class="co">#&gt; [53] pkgconfig_2.0.3    htmltools_0.5.9</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
