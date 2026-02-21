@@ -71,6 +71,17 @@ process_src_current <- function(raw_data, end_year) {
 
   combined <- dplyr::bind_rows(results)
 
+  # When both primary and secondary files exist (2020-2023), the same entity
+  # appears in both files with identical row_total and demographic counts.
+  # Only grade-level columns differ (primary has elementary grades, secondary
+  # has high school grades). Merge duplicates so each entity appears once,
+  # taking the max of each numeric column to combine grade counts.
+  combined <- merge_duplicate_entities(combined)
+
+  # Remove KDE's built-in state aggregate (district_id "999") — we compute
+  # our own via create_state_aggregate to avoid double-counting.
+  combined <- combined[is.na(combined$district_id) | combined$district_id != "999", ]
+
   # Create state aggregate
   state_agg <- create_state_aggregate(combined, end_year)
 
@@ -153,14 +164,20 @@ process_src_enrollment_df <- function(df, end_year, level) {
   # Filter to only demographics we care about
   df <- df[df[[demographic_col]] %in% names(demographic_map), ]
 
-  # Identify district vs school rows
-  # District rows have SCHOOL NAME = "---District Total---" or SCHOOL NUMBER = NA
-  # For 2024+, State rows have District Number = "999" and School Name = "All Schools"
-  df$is_district_row <- is.na(df[[school_num_col]]) |
-    df[[school_name_col]] == "---District Total---" |
-    (df[[school_name_col]] == "All Schools" & df[[district_num_col]] == "999")
+  # Identify state, district, and school rows
+  # State rows: District Number = "999" (KDE's state aggregate)
+  # District rows: SCHOOL NAME = "---District Total---" or SCHOOL NUMBER = NA
+  # School rows: everything else
+  df$is_state_row <- (!is.na(df[[district_num_col]]) & df[[district_num_col]] == "999")
+
+  df$is_district_row <- !df$is_state_row & (
+    is.na(df[[school_num_col]]) |
+    df[[school_name_col]] == "---District Total---"
+  )
 
   # For each entity (district or school), create a wide-format row
+  # Exclude state-level rows here; we compute our own state aggregate
+  df <- df[!df$is_state_row, ]
   entities <- unique(df[, c(district_num_col, district_name_col, school_num_col, school_name_col, "is_district_row")])
 
   result_list <- lapply(seq_len(nrow(entities)), function(i) {
@@ -296,6 +313,12 @@ process_src_historical <- function(raw_data, end_year) {
   }
 
   combined <- dplyr::bind_rows(results)
+
+  # Merge duplicate entities from primary/secondary files (same fix as src_current)
+  combined <- merge_duplicate_entities(combined)
+
+  # Remove KDE's built-in state aggregate (district_id "999")
+  combined <- combined[is.na(combined$district_id) | combined$district_id != "999", ]
 
   # Create state aggregate
   state_agg <- create_state_aggregate(combined, end_year)
@@ -437,6 +460,57 @@ create_state_aggregate <- function(df, end_year) {
   }
 
   state_row
+}
+
+
+#' Merge duplicate entity rows from primary/secondary files
+#'
+#' When KDE provides separate primary and secondary enrollment files (2020-2023),
+#' each file contains the same entities with the same row_total and demographic
+#' counts. Only grade-level columns differ. This function merges duplicate rows
+#' so each entity appears once, taking the max of numeric columns to combine
+#' grade counts from both files.
+#'
+#' @param df Data frame with potential duplicate entity rows
+#' @return Data frame with one row per entity
+#' @keywords internal
+merge_duplicate_entities <- function(df) {
+  if (nrow(df) == 0) return(df)
+
+  # Identity columns that define a unique entity
+  id_cols <- c("end_year", "type", "district_id", "school_id",
+               "district_name", "school_name")
+  id_cols <- id_cols[id_cols %in% names(df)]
+
+  # Numeric columns to merge (take max, since one file has 0/NA for grades it doesn't cover)
+  num_cols <- c(
+    "row_total",
+    "white", "black", "hispanic", "asian",
+    "pacific_islander", "native_american", "multiracial",
+    "male", "female",
+    "econ_disadv", "lep", "special_ed",
+    "grade_pk", "grade_k",
+    "grade_01", "grade_02", "grade_03", "grade_04",
+    "grade_05", "grade_06", "grade_07", "grade_08",
+    "grade_09", "grade_10", "grade_11", "grade_12"
+  )
+  num_cols <- num_cols[num_cols %in% names(df)]
+
+  # Helper: max that returns NA instead of -Inf for all-NA inputs
+  safe_max <- function(x) {
+    x <- x[!is.na(x)]
+    if (length(x) == 0) return(NA_real_)
+    max(x)
+  }
+
+  # Group by identity columns, take max of each numeric column
+  # This preserves row_total (same in both files) and combines grade counts
+  df |>
+    dplyr::group_by(dplyr::across(dplyr::all_of(id_cols))) |>
+    dplyr::summarize(
+      dplyr::across(dplyr::all_of(num_cols), safe_max),
+      .groups = "drop"
+    )
 }
 
 

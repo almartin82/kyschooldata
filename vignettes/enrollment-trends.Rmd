@@ -66,6 +66,7 @@ top_districts <- enr_2024 %>%
   arrange(desc(n_students)) %>%
   head(10) %>%
   mutate(district_label = reorder(district_name, n_students))
+stopifnot(nrow(top_districts) > 0)
 
 ggplot(top_districts, aes(x = district_label, y = n_students)) +
   geom_col(fill = colors["total"]) +
@@ -79,7 +80,7 @@ ggplot(top_districts, aes(x = district_label, y = n_students)) +
 
 ## 2. Kentucky enrollment peaked in 2020
 
-Kentucky had nearly 1.5 million student enrollment records in 2020. The decline since has been dramatic.
+Kentucky enrolled nearly 748,000 students in 2020. Enrollment has declined steadily since, dropping to about 711,000 by 2024.
 
 ```{r story-2}
 enr %>%
@@ -90,6 +91,7 @@ enr %>%
 ```{r enrollment-decline}
 state_trend <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment")
+stopifnot(nrow(state_trend) > 0)
 
 ggplot(state_trend, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
@@ -120,6 +122,7 @@ appalachia <- enr %>%
          subgroup == "total_enrollment", grade_level == "TOTAL") %>%
   group_by(end_year) %>%
   summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
+stopifnot(nrow(appalachia) > 0)
 
 ggplot(appalachia, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
@@ -144,6 +147,7 @@ enr %>%
 ```{r hispanic-growth}
 hispanic <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "hispanic")
+stopifnot(nrow(hispanic) > 0)
 
 ggplot(hispanic, aes(x = end_year, y = pct * 100)) +
   geom_line(linewidth = 1.5, color = colors["hispanic"]) +
@@ -156,7 +160,7 @@ ggplot(hispanic, aes(x = end_year, y = pct * 100)) +
 
 ## 5. COVID hit Kentucky hard
 
-Kentucky lost over 37,000 students between 2020 and 2021. The state saw some recovery in 2022-2023, but 2024 brought another significant decline.
+Kentucky lost about 20,000 students between 2020 and 2021. The state saw some recovery in 2022-2023, but 2024 brought a steeper decline of over 22,000.
 
 ```{r story-5}
 enr %>%
@@ -169,6 +173,7 @@ enr %>%
 ```{r covid-impact}
 covid_years <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment")
+stopifnot(nrow(covid_years) > 0)
 
 ggplot(covid_years, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
@@ -176,7 +181,7 @@ ggplot(covid_years, aes(x = end_year, y = n_students)) +
   geom_vline(xintercept = 2020, linetype = "dashed", color = "red", alpha = 0.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "COVID's Impact on Kentucky Enrollment",
-       subtitle = "Lost over 37,000 students in 2021, partial recovery, then another decline",
+       subtitle = "Lost ~20,000 students in 2021, partial recovery, then another decline",
        x = "School Year", y = "Students") +
   theme_readme()
 ```
@@ -197,6 +202,7 @@ enr %>%
 urban <- enr %>%
   filter(grepl("Fayette County|Jefferson County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment")
+stopifnot(nrow(urban) > 0)
 
 ggplot(urban, aes(x = end_year, y = n_students, color = district_name)) +
   geom_line(linewidth = 1.2) +
@@ -233,6 +239,7 @@ econ_top <- enr_2024 %>%
   arrange(desc(pct)) %>%
   head(10) %>%
   mutate(district_label = reorder(district_name, pct))
+stopifnot(nrow(econ_top) > 0)
 
 ggplot(econ_top, aes(x = district_label, y = pct * 100)) +
   geom_col(fill = colors["black"]) +
@@ -261,6 +268,7 @@ demo <- enr_2024 %>%
          subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) %>%
   arrange(desc(pct)) %>%
   mutate(subgroup_label = reorder(subgroup, pct))
+stopifnot(nrow(demo) > 0)
 
 ggplot(demo, aes(x = subgroup_label, y = pct * 100)) +
   geom_col(aes(fill = subgroup)) +
@@ -290,6 +298,7 @@ enr %>%
 boone <- enr %>%
   filter(is_district, grepl("Boone County", district_name, ignore.case = TRUE),
          subgroup == "total_enrollment", grade_level == "TOTAL")
+stopifnot(nrow(boone) > 0)
 
 ggplot(boone, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
@@ -321,6 +330,7 @@ independent <- enr_2024 %>%
   arrange(n_students) %>%
   head(15) %>%
   mutate(district_label = reorder(district_name, n_students))
+stopifnot(nrow(independent) > 0)
 
 ggplot(independent, aes(x = district_label, y = n_students)) +
   geom_col(fill = colors["total"]) +
@@ -359,6 +369,7 @@ state <- enr_2024 %>%
 
 compare <- bind_rows(jefferson, state) %>%
   mutate(subgroup = factor(subgroup, levels = c("white", "black", "hispanic", "asian", "multiracial")))
+stopifnot(nrow(compare) > 0)
 
 ggplot(compare, aes(x = subgroup, y = pct * 100, fill = area)) +
   geom_col(position = "dodge") +
@@ -386,6 +397,7 @@ gender <- enr_2024 %>%
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("male", "female")) %>%
   mutate(subgroup = factor(subgroup, levels = c("male", "female")))
+stopifnot(nrow(gender) > 0)
 
 ggplot(gender, aes(x = subgroup, y = n_students, fill = subgroup)) +
   geom_col() +
@@ -414,6 +426,7 @@ enr %>%
 oldham <- enr %>%
   filter(is_district, grepl("Oldham County", district_name, ignore.case = TRUE),
          subgroup == "total_enrollment", grade_level == "TOTAL")
+stopifnot(nrow(oldham) > 0)
 
 ggplot(oldham, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["asian"]) +
@@ -440,6 +453,7 @@ fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
 harlan <- enr %>%
   filter(is_district, grepl("Harlan County", district_name, ignore.case = TRUE),
          subgroup == "total_enrollment", grade_level == "TOTAL")
+stopifnot(nrow(harlan) > 0)
 
 ggplot(harlan, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["black"]) +
@@ -464,6 +478,7 @@ enr %>%
 ```{r multiracial-growth}
 multiracial <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "multiracial")
+stopifnot(nrow(multiracial) > 0)
 
 ggplot(multiracial, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = "#1ABC9C") +

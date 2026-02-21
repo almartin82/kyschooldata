@@ -19,7 +19,7 @@ Kentucky publishes rich enrollment data going back to 1997, but accessing it req
 
 ## What can you find with kyschooldata?
 
-**28 years of enrollment data (1997-2024).** 686,000 students today. 171 school districts. Here are fifteen stories hiding in the numbers:
+**28 years of enrollment data (1997-2024).** 711,000 students today. 171 school districts. Here are fifteen stories hiding in the numbers:
 
 ---
 
@@ -31,24 +31,13 @@ Jefferson County Public Schools (Louisville) serves 103,000 students, about 15% 
 library(kyschooldata)
 library(dplyr)
 
-enr_2024 <- fetch_enr(2024)
+enr_2024 <- fetch_enr(2024, use_cache = TRUE)
 
 enr_2024 %>%
   filter(is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   arrange(desc(n_students)) %>%
   select(district_name, n_students) %>%
   head(10)
-#>       district_name n_students
-#> 1     All Districts     686224
-#> 2  Jefferson County     103459
-#> 3    Fayette County      44362
-#> 4      Boone County      21583
-#> 5     Warren County      20394
-#> 6     Hardin County      16287
-#> 7     Kenton County      14645
-#> 8    Bullitt County      13674
-#> 9     Oldham County      12546
-#> 10   Daviess County      12011
 ```
 
 ![Top districts](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/jefferson-county-1.png)
@@ -57,20 +46,14 @@ enr_2024 %>%
 
 ### 2. Kentucky enrollment peaked in 2020
 
-Kentucky had nearly 1.5 million student enrollment records in 2020. The decline since has been dramatic.
+Kentucky enrolled nearly 748,000 students in 2020. Enrollment has declined steadily since, dropping to about 711,000 by 2024.
 
 ```r
-enr <- fetch_enr_multi(2020:2024)
+enr <- fetch_enr_multi(2020:2024, use_cache = TRUE)
 
 enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
-#>   end_year n_students
-#> 1     2020    1472317
-#> 2     2021    1434970
-#> 3     2022    1451381
-#> 4     2023    1456127
-#> 5     2024    1397078
 ```
 
 ![Enrollment decline](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/enrollment-decline-1.png)
@@ -84,15 +67,10 @@ Appalachian coal counties have seen significant enrollment declines. Pike, Floyd
 ```r
 appalachian <- c("Pike County", "Floyd County", "Letcher County", "Perry County")
 
-fetch_enr_multi(2020:2024) %>%
+fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
   filter(grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, district_name, n_students)
-#>    end_year  district_name n_students
-#> 1      2020   Floyd County       6092
-#> 2      2020 Letcher County       3119
-#> 3      2020   Perry County       4341
-#> 4      2020    Pike County       8770
 ```
 
 ![Appalachia decline](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/appalachia-decline-1.png)
@@ -107,12 +85,6 @@ Hispanic students grew from 7.5% to over 10% of enrollment between 2020 and 2024
 enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "hispanic") %>%
   select(end_year, n_students, pct)
-#>   end_year n_students        pct
-#> 1     2020     110575 0.07510271
-#> 2     2021     112828 0.07862743
-#> 3     2022     121423 0.08366032
-#> 4     2023     131865 0.09055872
-#> 5     2024     141735 0.10145103
 ```
 
 ![Hispanic growth](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/hispanic-growth-1.png)
@@ -121,7 +93,7 @@ enr %>%
 
 ### 5. COVID hit Kentucky hard
 
-Kentucky lost over 37,000 students between 2020 and 2021. The state saw some recovery in 2022-2023, but 2024 brought another significant decline.
+Kentucky lost about 20,000 students between 2020 and 2021. The state saw some recovery in 2022-2023, but 2024 brought a steeper decline of over 22,000.
 
 ```r
 enr %>%
@@ -129,12 +101,6 @@ enr %>%
          end_year %in% 2020:2024) %>%
   select(end_year, n_students) %>%
   mutate(change = n_students - lag(n_students))
-#>   end_year n_students change
-#> 1     2020    1472317     NA
-#> 2     2021    1434970 -37347
-#> 3     2022    1451381  16411
-#> 4     2023    1456127   4746
-#> 5     2024    1397078 -59049
 ```
 
 ![COVID impact](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/covid-impact-1.png)
@@ -173,8 +139,6 @@ Kentucky has one of the highest rates of economic disadvantage in the nation. In
 enr_2024 %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "econ_disadv") %>%
   select(n_students, pct)
-#>   n_students       pct
-#> 1     869325 0.6222451
 
 # Highest rates
 enr_2024 %>%
@@ -182,17 +146,6 @@ enr_2024 %>%
   arrange(desc(pct)) %>%
   select(district_name, n_students, pct) %>%
   head(10)
-#>            district_name n_students       pct
-#> 1     Fulton Independent        318 0.9325513
-#> 2  Covington Independent       3693 0.9089343
-#> 3    Newport Independent       1595 0.9083144
-#> 4     Dayton Independent        820 0.8807734
-#> 5   Fairview Independent        507 0.8711340
-#> 6             Lee County        831 0.8629283
-#> 7          Harlan County       3156 0.8590093
-#> 8        McCreary County       2491 0.8551322
-#> 9            Bell County       2202 0.8334595
-#> 10 Pineville Independent        532 0.8325509
 ```
 
 ![Economic disadvantage](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/econ-disadvantage-1.png)
@@ -209,11 +162,6 @@ enr_2024 %>%
          subgroup %in% c("white", "black", "hispanic", "asian")) %>%
   select(subgroup, n_students, pct) %>%
   arrange(desc(pct))
-#>   subgroup n_students        pct
-#> 1    white     994258 0.71166964
-#> 2    black     152218 0.10895455
-#> 3 hispanic     141735 0.10145103
-#> 4    asian      29203 0.02090291
 ```
 
 ![Demographics](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/demographics-1.png)
@@ -299,9 +247,6 @@ enr_2024 %>%
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("male", "female")) %>%
   select(subgroup, n_students, pct)
-#>   subgroup n_students       pct
-#> 1     male     722622 0.5172381
-#> 2   female     674456 0.4827619
 ```
 
 ![Gender balance](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/gender-balance-1.png)
@@ -334,7 +279,7 @@ enr %>%
 Harlan County had about 4,100 students in 2020. The county symbolizes the decline of coal country in eastern Kentucky.
 
 ```r
-fetch_enr_multi(2020:2024) %>%
+fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
   filter(grepl("Harlan County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
@@ -354,12 +299,6 @@ Multiracial students now make up 5.4% of Kentucky's enrollment, up from 4.3% in 
 enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "multiracial") %>%
   select(end_year, n_students, pct)
-#>   end_year n_students        pct
-#> 1     2020      63077 0.04284200
-#> 2     2021      66279 0.04618842
-#> 3     2022      70157 0.04833810
-#> 4     2023      73858 0.05072222
-#> 5     2024      75010 0.05369063
 ```
 
 ![Multiracial growth](https://almartin82.github.io/kyschooldata/articles/enrollment-trends_files/figure-html/multiracial-growth-1.png)
@@ -494,7 +433,7 @@ Kentucky applies data suppression to protect student privacy:
 
 ### Known Data Quality Issues
 
-- **2023 data:** Some districts show duplicate records at different aggregation levels
+- **2020-2023 data:** Primary and secondary enrollment files are merged during processing to avoid duplicate records
 - **Pre-2012 data:** SAAR format provides district-level totals only; no school-level data available
 - **Multiracial category:** Only available from 2020 onwards when federal reporting standards changed
 
