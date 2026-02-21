@@ -166,6 +166,23 @@ If CI fails, fix the issue and push - auto-merge triggers when checks pass.
 
 ---
 
+## Valid Filter Values (tidy enrollment via `fetch_enr(tidy = TRUE)`)
+
+### subgroup
+`total_enrollment`, `white`, `black`, `hispanic`, `asian`, `native_american`, `pacific_islander`, `multiracial`, `male`, `female`, `special_ed`, `lep`, `econ_disadv`
+
+### grade_level
+`TOTAL`, `PK`, `K`, `01`-`12`
+
+Grade columns are mapped from `grade_pk` -> `PK`, `grade_k` -> `K`, `grade_01` -> `01`, etc. The `enr_grade_aggs()` function adds computed aggregates: `K8`, `HS`, `K12`.
+
+### entity flags
+`is_state`, `is_district`, `is_school`
+
+The `type` column has values `State`, `District`, and `School`. The `id_enr_aggs()` function creates boolean flags.
+
+---
+
 ## README Images from Vignettes (REQUIRED)
 
 **NEVER use `man/figures/` or `generate_readme_figs.R` for README images.**
