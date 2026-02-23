@@ -44,8 +44,23 @@ colors <- c("total" = "#2C3E50", "white" = "#3498DB", "black" = "#E74C3C",
 
 ```{r fetch-data, cache = TRUE}
 # Fetch data for visualizations
-enr_2024 <- fetch_enr(2024, use_cache = TRUE)
-enr <- fetch_enr_multi(2020:2024, use_cache = TRUE)
+enr_2024 <- tryCatch(
+  fetch_enr(2024, use_cache = TRUE),
+  error = function(e) {
+    warning("Failed to fetch 2024 enrollment data: ", e$message)
+    NULL
+  }
+)
+stopifnot(!is.null(enr_2024))
+
+enr <- tryCatch(
+  fetch_enr_multi(2020:2024, use_cache = TRUE),
+  error = function(e) {
+    warning("Failed to fetch multi-year enrollment data: ", e$message)
+    NULL
+  }
+)
+stopifnot(!is.null(enr))
 ```
 
 ## 1. Jefferson County is Kentucky's giant
@@ -121,7 +136,16 @@ Appalachian coal counties have seen significant enrollment declines. Pike, Floyd
 ```{r story-3}
 appalachian <- c("Pike County", "Floyd County", "Letcher County", "Perry County")
 
-s3 <- fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
+s3 <- tryCatch(
+  fetch_enr_multi(2020:2024, use_cache = TRUE),
+  error = function(e) {
+    warning("Failed to fetch coal county data: ", e$message)
+    NULL
+  }
+)
+stopifnot(!is.null(s3))
+
+s3 <- s3 %>%
   filter(grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, district_name, n_students)
@@ -143,6 +167,8 @@ ggplot(appalachia, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
   geom_point(size = 3, color = colors["total"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(appalachia$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Eastern Kentucky Coal Counties",
        subtitle = "Pike, Floyd, Letcher, and Perry counties combined",
@@ -173,6 +199,8 @@ ggplot(hispanic, aes(x = end_year, y = pct * 100)) +
   geom_line(linewidth = 1.5, color = colors["hispanic"]) +
   geom_point(size = 3, color = colors["hispanic"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(hispanic$pct * 100), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   labs(title = "Hispanic Student Population in Kentucky",
        subtitle = "From 7.7% to over 10% since 2020",
        x = "School Year", y = "Percent of Students") +
@@ -239,6 +267,8 @@ ggplot(urban, aes(x = end_year, y = n_students, color = district_name)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2.5) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(urban$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Kentucky's Two Urban Giants",
        subtitle = "Both districts relatively stable since 2020",
@@ -350,6 +380,8 @@ ggplot(boone, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
   geom_point(size = 3, color = colors["total"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(boone$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Boone County - Northern Kentucky Growth",
        subtitle = "Cincinnati suburbs with stable enrollment",
@@ -495,6 +527,8 @@ ggplot(oldham, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["asian"]) +
   geom_point(size = 3, color = colors["asian"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(oldham$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Oldham County - The Wealthy Suburb",
        subtitle = "Stable enrollment between Louisville and Lexington",
@@ -507,7 +541,16 @@ ggplot(oldham, aes(x = end_year, y = n_students)) +
 Harlan County dropped from 4,096 students in 2020 to 3,674 in 2024, a 10% decline in just five years. The county symbolizes the contraction of coal country in eastern Kentucky.
 
 ```{r story-14}
-s14 <- fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
+s14 <- tryCatch(
+  fetch_enr_multi(2020:2024, use_cache = TRUE),
+  error = function(e) {
+    warning("Failed to fetch Harlan County data: ", e$message)
+    NULL
+  }
+)
+stopifnot(!is.null(s14))
+
+s14 <- s14 %>%
   filter(grepl("Harlan County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
@@ -527,6 +570,8 @@ ggplot(harlan, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["black"]) +
   geom_point(size = 3, color = colors["black"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(harlan$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Harlan County - The Coal Story",
        subtitle = "10% enrollment decline in five years",
@@ -557,6 +602,8 @@ ggplot(multiracial, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = "#1ABC9C") +
   geom_point(size = 3, color = "#1ABC9C") +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(multiracial$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Multiracial Students in Kentucky",
        subtitle = "5.3% of enrollment, up from 4.4% in 2020",
