@@ -24,8 +24,23 @@ colors <- c("total" = "#2C3E50", "white" = "#3498DB", "black" = "#E74C3C",
 
 ``` r
 # Fetch data for visualizations
-enr_2024 <- fetch_enr(2024, use_cache = TRUE)
-enr <- fetch_enr_multi(2020:2024, use_cache = TRUE)
+enr_2024 <- tryCatch(
+  fetch_enr(2024, use_cache = TRUE),
+  error = function(e) {
+    warning("Failed to fetch 2024 enrollment data: ", e$message)
+    NULL
+  }
+)
+stopifnot(!is.null(enr_2024))
+
+enr <- tryCatch(
+  fetch_enr_multi(2020:2024, use_cache = TRUE),
+  error = function(e) {
+    warning("Failed to fetch multi-year enrollment data: ", e$message)
+    NULL
+  }
+)
+stopifnot(!is.null(enr))
 ```
 
 ## 1. Jefferson County is Kentucky’s giant
@@ -145,7 +160,16 @@ students in 2020, dropping to about 20,200 by 2024.
 ``` r
 appalachian <- c("Pike County", "Floyd County", "Letcher County", "Perry County")
 
-s3 <- fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
+s3 <- tryCatch(
+  fetch_enr_multi(2020:2024, use_cache = TRUE),
+  error = function(e) {
+    warning("Failed to fetch coal county data: ", e$message)
+    NULL
+  }
+)
+stopifnot(!is.null(s3))
+
+s3 <- s3 %>%
   filter(grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, district_name, n_students)
@@ -196,6 +220,8 @@ ggplot(appalachia, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
   geom_point(size = 3, color = colors["total"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(appalachia$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Eastern Kentucky Coal Counties",
        subtitle = "Pike, Floyd, Letcher, and Perry counties combined",
@@ -241,6 +267,8 @@ ggplot(hispanic, aes(x = end_year, y = pct * 100)) +
   geom_line(linewidth = 1.5, color = colors["hispanic"]) +
   geom_point(size = 3, color = colors["hispanic"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(hispanic$pct * 100), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   labs(title = "Hispanic Student Population in Kentucky",
        subtitle = "From 7.7% to over 10% since 2020",
        x = "School Year", y = "Percent of Students") +
@@ -345,6 +373,8 @@ ggplot(urban, aes(x = end_year, y = n_students, color = district_name)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2.5) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(urban$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Kentucky's Two Urban Giants",
        subtitle = "Both districts relatively stable since 2020",
@@ -514,6 +544,8 @@ ggplot(boone, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
   geom_point(size = 3, color = colors["total"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(boone$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Boone County - Northern Kentucky Growth",
        subtitle = "Cincinnati suburbs with stable enrollment",
@@ -734,6 +766,8 @@ ggplot(oldham, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["asian"]) +
   geom_point(size = 3, color = colors["asian"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(oldham$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Oldham County - The Wealthy Suburb",
        subtitle = "Stable enrollment between Louisville and Lexington",
@@ -750,7 +784,16 @@ Harlan County dropped from 4,096 students in 2020 to 3,674 in 2024, a
 coal country in eastern Kentucky.
 
 ``` r
-s14 <- fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
+s14 <- tryCatch(
+  fetch_enr_multi(2020:2024, use_cache = TRUE),
+  error = function(e) {
+    warning("Failed to fetch Harlan County data: ", e$message)
+    NULL
+  }
+)
+stopifnot(!is.null(s14))
+
+s14 <- s14 %>%
   filter(grepl("Harlan County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
@@ -782,6 +825,8 @@ ggplot(harlan, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["black"]) +
   geom_point(size = 3, color = colors["black"]) +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(harlan$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Harlan County - The Coal Story",
        subtitle = "10% enrollment decline in five years",
@@ -827,6 +872,8 @@ ggplot(multiracial, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = "#1ABC9C") +
   geom_point(size = 3, color = "#1ABC9C") +
   geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(multiracial$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Multiracial Students in Kentucky",
        subtitle = "5.3% of enrollment, up from 4.4% in 2020",
@@ -860,21 +907,20 @@ sessionInfo()
 #> 
 #> other attached packages:
 #> [1] scales_1.4.0       dplyr_1.2.0        ggplot2_4.0.2      kyschooldata_0.1.0
-#> [5] testthat_3.3.2    
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] tidyr_1.3.2        rappdirs_0.3.4     sass_0.4.10        generics_0.1.4    
-#>  [5] hms_1.1.4          digest_0.6.39      magrittr_2.0.4     evaluate_1.0.5    
-#>  [9] grid_4.5.2         RColorBrewer_1.1-3 fastmap_1.2.0      jsonlite_2.0.0    
-#> [13] brio_1.1.5         httr_1.4.8         purrr_1.2.1        codetools_0.2-20  
-#> [17] textshaping_1.0.4  jquerylib_0.1.4    cli_3.6.5          rlang_1.1.7       
-#> [21] crayon_1.5.3       bit64_4.6.0-1      withr_3.0.2        cachem_1.1.0      
-#> [25] yaml_2.3.12        tools_4.5.2        parallel_4.5.2     tzdb_0.5.0        
-#> [29] curl_7.0.0         vctrs_0.7.1        R6_2.6.1           lifecycle_1.0.5   
-#> [33] fs_1.6.6           bit_4.6.0          vroom_1.7.0        ragg_1.5.0        
-#> [37] pkgconfig_2.0.3    desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1     
-#> [41] bslib_0.10.0       gtable_0.3.6       glue_1.8.0         systemfonts_1.3.1 
-#> [45] xfun_0.56          tibble_3.3.1       tidyselect_1.2.1   knitr_1.51        
-#> [49] farver_2.1.2       htmltools_0.5.9    rmarkdown_2.30     labeling_0.4.3    
-#> [53] readr_2.2.0        compiler_4.5.2     S7_0.2.1
+#>  [1] bit_4.6.0          gtable_0.3.6       jsonlite_2.0.0     crayon_1.5.3      
+#>  [5] compiler_4.5.2     tidyselect_1.2.1   parallel_4.5.2     tidyr_1.3.2       
+#>  [9] jquerylib_0.1.4    systemfonts_1.3.1  textshaping_1.0.4  yaml_2.3.12       
+#> [13] fastmap_1.2.0      readr_2.2.0        R6_2.6.1           labeling_0.4.3    
+#> [17] generics_0.1.4     curl_7.0.0         knitr_1.51         tibble_3.3.1      
+#> [21] desc_1.4.3         tzdb_0.5.0         bslib_0.10.0       pillar_1.11.1     
+#> [25] RColorBrewer_1.1-3 rlang_1.1.7        cachem_1.1.0       xfun_0.56         
+#> [29] fs_1.6.6           sass_0.4.10        S7_0.2.1           bit64_4.6.0-1     
+#> [33] cli_3.6.5          pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.4    
+#> [37] digest_0.6.39      grid_4.5.2         vroom_1.7.0        hms_1.1.4         
+#> [41] rappdirs_0.3.4     lifecycle_1.0.5    vctrs_0.7.1        evaluate_1.0.5    
+#> [45] glue_1.8.0         farver_2.1.2       codetools_0.2-20   ragg_1.5.0        
+#> [49] purrr_1.2.1        rmarkdown_2.30     httr_1.4.8         tools_4.5.2       
+#> [53] pkgconfig_2.0.3    htmltools_0.5.9
 ```
