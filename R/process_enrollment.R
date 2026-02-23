@@ -71,8 +71,18 @@ process_src_current <- function(raw_data, end_year) {
 
   combined <- dplyr::bind_rows(results)
 
-  # Create state aggregate
-  state_agg <- create_state_aggregate(combined, end_year)
+  # Extract state-level data from combined results.
+  # Use KDE's official "All Districts" aggregate (district_id 999) as the state
+  # total rather than computing our own sum, which can differ due to
+  # independent district overlap.
+  state_agg <- extract_kde_state_agg(combined, end_year)
+  combined <- combined[is.na(combined$district_id) | combined$district_id != "999", ]
+
+  # Deduplicate district rows. When primary and secondary files both exist
+  # (2020-2023), some districts appear in both. The secondary file contains
+  # career/technical center enrollment that overlaps with primary. Keep the
+  # primary file's row (larger row_total) for each district.
+  combined <- dedup_district_rows(combined)
 
   # Combine all
   dplyr::bind_rows(state_agg, combined)
@@ -297,8 +307,12 @@ process_src_historical <- function(raw_data, end_year) {
 
   combined <- dplyr::bind_rows(results)
 
-  # Create state aggregate
-  state_agg <- create_state_aggregate(combined, end_year)
+  # Extract KDE's state aggregate (district_id 999) if present
+  state_agg <- extract_kde_state_agg(combined, end_year)
+  combined <- combined[is.na(combined$district_id) | combined$district_id != "999", ]
+
+  # Deduplicate district rows from primary/secondary overlap
+  combined <- dedup_district_rows(combined)
 
   dplyr::bind_rows(state_agg, combined)
 }
@@ -384,6 +398,72 @@ process_saar <- function(raw_data, end_year) {
   state_agg <- create_state_aggregate(result, end_year)
 
   dplyr::bind_rows(state_agg, result)
+}
+
+
+#' Deduplicate district rows from primary/secondary file overlap
+#'
+#' When KDE provides separate primary and secondary enrollment files (2020-2023),
+#' some districts appear in both. The secondary file contains career/technical
+#' center data. For each duplicated district, keep the row with the larger
+#' row_total (primary enrollment), since the primary file represents the official
+#' comprehensive enrollment count.
+#'
+#' @param df Processed data frame
+#' @return Data frame with one row per district (per type)
+#' @keywords internal
+dedup_district_rows <- function(df) {
+  if (!"row_total" %in% names(df) || !"district_id" %in% names(df) || !"type" %in% names(df)) {
+    return(df)
+  }
+
+  # Split into district and non-district (school) rows
+  dist_rows <- df[!is.na(df$type) & df$type == "District", ]
+  other_rows <- df[is.na(df$type) | df$type != "District", ]
+
+  if (nrow(dist_rows) == 0) return(df)
+
+  # For each district_id, keep the row with the largest row_total
+  dist_rows <- dist_rows[order(-dist_rows$row_total), ]
+  dist_rows <- dist_rows[!duplicated(dist_rows$district_id), ]
+
+  dplyr::bind_rows(dist_rows, other_rows)
+}
+
+
+#' Extract KDE state aggregate from processed data
+#'
+#' KDE includes a statewide aggregate row with district_id "999" in its SRC
+#' data files. When data is split across primary and secondary files (2020-2023),
+#' both files may contain a district 999 row. We use the primary file's number
+#' (the larger total) as the official state enrollment figure.
+#'
+#' @param df Processed data frame that may contain district_id 999 rows
+#' @param end_year School year end
+#' @return Single-row data frame with state totals
+#' @keywords internal
+extract_kde_state_agg <- function(df, end_year) {
+  kde_state <- df[!is.na(df$district_id) & df$district_id == "999", ]
+
+  if (nrow(kde_state) > 0) {
+    # If multiple state rows (primary + secondary files), keep the primary
+    # (larger total), which is the official KDE enrollment figure
+    if ("row_total" %in% names(kde_state) && sum(!is.na(kde_state$row_total)) > 1) {
+      kde_state <- kde_state[which.max(kde_state$row_total), , drop = FALSE]
+    } else if (nrow(kde_state) > 1) {
+      kde_state <- kde_state[1, , drop = FALSE]
+    }
+
+    kde_state$type <- "State"
+    kde_state$district_id <- NA_character_
+    kde_state$district_name <- NA_character_
+    kde_state$school_id <- NA_character_
+    kde_state$school_name <- NA_character_
+    return(kde_state)
+  }
+
+  # Fallback: compute state aggregate from district data
+  create_state_aggregate(df, end_year)
 }
 
 

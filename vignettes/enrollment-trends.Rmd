@@ -53,11 +53,13 @@ enr <- fetch_enr_multi(2020:2024, use_cache = TRUE)
 Jefferson County Public Schools (Louisville) serves 103,000 students, about 15% of Kentucky's entire enrollment. It's larger than the next five districts combined.
 
 ```{r story-1}
-enr_2024 %>%
+s1 <- enr_2024 %>%
   filter(is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   arrange(desc(n_students)) %>%
   select(district_name, n_students) %>%
   head(10)
+stopifnot(nrow(s1) > 0)
+s1
 ```
 
 ```{r jefferson-county}
@@ -66,6 +68,9 @@ top_districts <- enr_2024 %>%
   arrange(desc(n_students)) %>%
   head(10) %>%
   mutate(district_label = reorder(district_name, n_students))
+stopifnot(nrow(top_districts) > 0)
+
+print(top_districts %>% select(district_name, n_students))
 
 ggplot(top_districts, aes(x = district_label, y = n_students)) +
   geom_col(fill = colors["total"]) +
@@ -77,41 +82,51 @@ ggplot(top_districts, aes(x = district_label, y = n_students)) +
   theme_readme()
 ```
 
-## 2. Kentucky enrollment peaked in 2020
+## 2. Kentucky enrollment has held steady near 686,000
 
-Kentucky had nearly 1.5 million student enrollment records in 2020. The decline since has been dramatic.
+Kentucky enrolled 698,000 students in 2020 and 686,000 in 2024 -- a modest 1.7% decline over five years. Despite COVID disruptions, enrollment has been remarkably stable.
 
 ```{r story-2}
-enr %>%
+s2 <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
+stopifnot(nrow(s2) > 0)
+s2
 ```
 
 ```{r enrollment-decline}
 state_trend <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment")
+stopifnot(nrow(state_trend) > 0)
+
+print(state_trend %>% select(end_year, n_students))
 
 ggplot(state_trend, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
   geom_point(size = 3, color = colors["total"]) +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(state_trend$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma, limits = c(0, NA)) +
   labs(title = "Kentucky Public School Enrollment",
-       subtitle = "Peaked in 2020, declining since",
+       subtitle = "Stable near 686,000 students since 2020",
        x = "School Year", y = "Students") +
   theme_readme()
 ```
 
 ## 3. Eastern Kentucky coal counties are shrinking
 
-Appalachian coal counties have seen significant enrollment declines. Pike, Floyd, Letcher, and Perry counties combined had over 22,000 students in 2020.
+Appalachian coal counties have seen significant enrollment declines. Pike, Floyd, Letcher, and Perry counties combined had over 22,000 students in 2020, dropping to about 20,200 by 2024.
 
 ```{r story-3}
 appalachian <- c("Pike County", "Floyd County", "Letcher County", "Perry County")
 
-fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
+s3 <- fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
   filter(grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, district_name, n_students)
+stopifnot(nrow(s3) > 0)
+s3
 ```
 
 ```{r appalachia-decline}
@@ -120,10 +135,14 @@ appalachia <- enr %>%
          subgroup == "total_enrollment", grade_level == "TOTAL") %>%
   group_by(end_year) %>%
   summarize(n_students = sum(n_students, na.rm = TRUE), .groups = "drop")
+stopifnot(nrow(appalachia) > 0)
+
+print(appalachia)
 
 ggplot(appalachia, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
   geom_point(size = 3, color = colors["total"]) +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Eastern Kentucky Coal Counties",
        subtitle = "Pike, Floyd, Letcher, and Perry counties combined",
@@ -133,74 +152,93 @@ ggplot(appalachia, aes(x = end_year, y = n_students)) +
 
 ## 4. Hispanic students now 10% of enrollment
 
-Hispanic students grew from 7.5% to over 10% of enrollment between 2020 and 2024. Lexington, Louisville, and central Kentucky drive this growth.
+Hispanic students grew from 7.7% to over 10% of enrollment between 2020 and 2024. Lexington, Louisville, and central Kentucky drive this growth.
 
 ```{r story-4}
-enr %>%
+s4 <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "hispanic") %>%
   select(end_year, n_students, pct)
+stopifnot(nrow(s4) > 0)
+s4
 ```
 
 ```{r hispanic-growth}
 hispanic <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "hispanic")
+stopifnot(nrow(hispanic) > 0)
+
+print(hispanic %>% select(end_year, n_students, pct))
 
 ggplot(hispanic, aes(x = end_year, y = pct * 100)) +
   geom_line(linewidth = 1.5, color = colors["hispanic"]) +
   geom_point(size = 3, color = colors["hispanic"]) +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
   labs(title = "Hispanic Student Population in Kentucky",
-       subtitle = "From 7.5% to over 10% since 2020",
+       subtitle = "From 7.7% to over 10% since 2020",
        x = "School Year", y = "Percent of Students") +
   theme_readme()
 ```
 
-## 5. COVID hit Kentucky hard
+## 5. COVID dipped enrollment by 15,000 students
 
-Kentucky lost over 37,000 students between 2020 and 2021. The state saw some recovery in 2022-2023, but 2024 brought another significant decline.
+Kentucky lost over 15,000 students between 2020 and 2021. The state recovered modestly in 2022-2023 before a slight decline in 2024.
 
 ```{r story-5}
-enr %>%
+s5 <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment",
          end_year %in% 2020:2024) %>%
   select(end_year, n_students) %>%
   mutate(change = n_students - lag(n_students))
+stopifnot(nrow(s5) > 0)
+s5
 ```
 
 ```{r covid-impact}
 covid_years <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment")
+stopifnot(nrow(covid_years) > 0)
+
+print(covid_years %>% select(end_year, n_students))
 
 ggplot(covid_years, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
   geom_point(size = 3, color = colors["total"]) +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "red", alpha = 0.5) +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
+  annotate("text", x = 2020.7, y = max(covid_years$n_students), label = "COVID",
+           color = "red", alpha = 0.7, hjust = 0, size = 3.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "COVID's Impact on Kentucky Enrollment",
-       subtitle = "Lost over 37,000 students in 2021, partial recovery, then another decline",
+       subtitle = "Lost over 15,000 students in 2021, then gradual recovery",
        x = "School Year", y = "Students") +
   theme_readme()
 ```
 
-## 6. Fayette County holds steady while Louisville shrinks
+## 6. Fayette County holds steady alongside Louisville
 
-While Jefferson County has remained relatively stable around 103,000, Fayette County (Lexington) has held at about 44,000 students.
+While Jefferson County has remained relatively stable around 103,000, Fayette County (Lexington) has held at about 44,000 students. Both districts show resilience despite statewide pressures.
 
 ```{r story-6}
-enr %>%
+s6 <- enr %>%
   filter(grepl("Fayette County|Jefferson County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, district_name, n_students) %>%
   tidyr::pivot_wider(names_from = district_name, values_from = n_students)
+stopifnot(nrow(s6) > 0)
+s6
 ```
 
 ```{r fayette-jefferson}
 urban <- enr %>%
   filter(grepl("Fayette County|Jefferson County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment")
+stopifnot(nrow(urban) > 0)
+
+print(urban %>% select(end_year, district_name, n_students))
 
 ggplot(urban, aes(x = end_year, y = n_students, color = district_name)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2.5) +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Kentucky's Two Urban Giants",
        subtitle = "Both districts relatively stable since 2020",
@@ -213,18 +251,22 @@ ggplot(urban, aes(x = end_year, y = n_students, color = district_name)) +
 Kentucky has one of the highest rates of economic disadvantage in the nation. In some eastern Kentucky districts, over 90% of students qualify.
 
 ```{r story-7a}
-enr_2024 %>%
+s7a <- enr_2024 %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "econ_disadv") %>%
   select(n_students, pct)
+stopifnot(nrow(s7a) > 0)
+s7a
 ```
 
 ```{r story-7b}
 # Highest rates
-enr_2024 %>%
+s7b <- enr_2024 %>%
   filter(is_district, grade_level == "TOTAL", subgroup == "econ_disadv") %>%
   arrange(desc(pct)) %>%
   select(district_name, n_students, pct) %>%
   head(10)
+stopifnot(nrow(s7b) > 0)
+s7b
 ```
 
 ```{r econ-disadvantage}
@@ -233,6 +275,9 @@ econ_top <- enr_2024 %>%
   arrange(desc(pct)) %>%
   head(10) %>%
   mutate(district_label = reorder(district_name, pct))
+stopifnot(nrow(econ_top) > 0)
+
+print(econ_top %>% select(district_name, pct))
 
 ggplot(econ_top, aes(x = district_label, y = pct * 100)) +
   geom_col(fill = colors["black"]) +
@@ -248,11 +293,13 @@ ggplot(econ_top, aes(x = district_label, y = pct * 100)) +
 Kentucky remains one of the less diverse states. Louisville and Lexington have significant minority populations; most rural districts are 90%+ white.
 
 ```{r story-8}
-enr_2024 %>%
+s8 <- enr_2024 %>%
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("white", "black", "hispanic", "asian")) %>%
   select(subgroup, n_students, pct) %>%
   arrange(desc(pct))
+stopifnot(nrow(s8) > 0)
+s8
 ```
 
 ```{r demographics}
@@ -261,6 +308,9 @@ demo <- enr_2024 %>%
          subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) %>%
   arrange(desc(pct)) %>%
   mutate(subgroup_label = reorder(subgroup, pct))
+stopifnot(nrow(demo) > 0)
+
+print(demo %>% select(subgroup, n_students, pct))
 
 ggplot(demo, aes(x = subgroup_label, y = pct * 100)) +
   geom_col(aes(fill = subgroup)) +
@@ -280,20 +330,26 @@ ggplot(demo, aes(x = subgroup_label, y = pct * 100)) +
 Boone County in the Cincinnati suburbs has about 21,500 students. It's now the third-largest district in Kentucky.
 
 ```{r story-9}
-enr %>%
+s9 <- enr %>%
   filter(grepl("Boone County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
+stopifnot(nrow(s9) > 0)
+s9
 ```
 
 ```{r boone-county}
 boone <- enr %>%
   filter(is_district, grepl("Boone County", district_name, ignore.case = TRUE),
          subgroup == "total_enrollment", grade_level == "TOTAL")
+stopifnot(nrow(boone) > 0)
+
+print(boone %>% select(end_year, n_students))
 
 ggplot(boone, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["total"]) +
   geom_point(size = 3, color = colors["total"]) +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Boone County - Northern Kentucky Growth",
        subtitle = "Cincinnati suburbs with stable enrollment",
@@ -303,31 +359,36 @@ ggplot(boone, aes(x = end_year, y = n_students)) +
 
 ## 10. Independent districts are a Kentucky tradition
 
-Kentucky has both county-wide districts (like Jefferson County) and independent city districts (like Bowling Green Independent). Some independent districts serve just a few students.
+Kentucky has both county-wide districts (like Jefferson County) and independent city districts (like Bowling Green Independent). Some independent districts serve just a few hundred students.
 
 ```{r story-10}
-enr_2024 %>%
+s10 <- enr_2024 %>%
   filter(grepl("Independent", district_name, ignore.case = TRUE),
-         grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   arrange(n_students) %>%
   select(district_name, n_students) %>%
   head(10)
+stopifnot(nrow(s10) > 0)
+s10
 ```
 
 ```{r independent-districts}
 independent <- enr_2024 %>%
   filter(grepl("Independent", district_name, ignore.case = TRUE),
-         grade_level == "TOTAL", subgroup == "total_enrollment") %>%
+         is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   arrange(n_students) %>%
   head(15) %>%
   mutate(district_label = reorder(district_name, n_students))
+stopifnot(nrow(independent) > 0)
+
+print(independent %>% select(district_name, n_students))
 
 ggplot(independent, aes(x = district_label, y = n_students)) +
   geom_col(fill = colors["total"]) +
   coord_flip() +
   scale_y_continuous(labels = comma) +
   labs(title = "Kentucky's Smallest Independent Districts",
-       subtitle = "Some serve just a few students with their own school boards",
+       subtitle = "Some serve just a few hundred students with their own school boards",
        x = "", y = "Students") +
   theme_readme()
 ```
@@ -337,11 +398,13 @@ ggplot(independent, aes(x = district_label, y = n_students)) +
 Jefferson County has significant Black (36%), Hispanic (18%), and Asian (5%) populations. White students make up only 35% of enrollment in Louisville.
 
 ```{r story-11}
-enr_2024 %>%
+s11 <- enr_2024 %>%
   filter(grepl("Jefferson County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL",
          subgroup %in% c("white", "black", "hispanic", "asian")) %>%
   select(subgroup, n_students, pct)
+stopifnot(nrow(s11) > 0)
+s11
 ```
 
 ```{r louisville-diversity}
@@ -359,6 +422,9 @@ state <- enr_2024 %>%
 
 compare <- bind_rows(jefferson, state) %>%
   mutate(subgroup = factor(subgroup, levels = c("white", "black", "hispanic", "asian", "multiracial")))
+stopifnot(nrow(compare) > 0)
+
+print(compare %>% select(area, subgroup, pct))
 
 ggplot(compare, aes(x = subgroup, y = pct * 100, fill = area)) +
   geom_col(position = "dodge") +
@@ -375,10 +441,12 @@ ggplot(compare, aes(x = subgroup, y = pct * 100, fill = area)) +
 Kentucky schools have nearly equal male and female enrollment, with males at 51.7% and females at 48.3%.
 
 ```{r story-12}
-enr_2024 %>%
+s12 <- enr_2024 %>%
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("male", "female")) %>%
   select(subgroup, n_students, pct)
+stopifnot(nrow(s12) > 0)
+s12
 ```
 
 ```{r gender-balance}
@@ -386,6 +454,9 @@ gender <- enr_2024 %>%
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("male", "female")) %>%
   mutate(subgroup = factor(subgroup, levels = c("male", "female")))
+stopifnot(nrow(gender) > 0)
+
+print(gender %>% select(subgroup, n_students, pct))
 
 ggplot(gender, aes(x = subgroup, y = n_students, fill = subgroup)) +
   geom_col() +
@@ -404,20 +475,26 @@ ggplot(gender, aes(x = subgroup, y = n_students, fill = subgroup)) +
 Oldham County, between Louisville and Lexington, has about 12,500 students. It has Kentucky's lowest economic disadvantage rate.
 
 ```{r story-13}
-enr %>%
+s13 <- enr %>%
   filter(grepl("Oldham County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
+stopifnot(nrow(s13) > 0)
+s13
 ```
 
 ```{r oldham-county}
 oldham <- enr %>%
   filter(is_district, grepl("Oldham County", district_name, ignore.case = TRUE),
          subgroup == "total_enrollment", grade_level == "TOTAL")
+stopifnot(nrow(oldham) > 0)
+
+print(oldham %>% select(end_year, n_students))
 
 ggplot(oldham, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["asian"]) +
   geom_point(size = 3, color = colors["asian"]) +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Oldham County - The Wealthy Suburb",
        subtitle = "Stable enrollment between Louisville and Lexington",
@@ -427,50 +504,62 @@ ggplot(oldham, aes(x = end_year, y = n_students)) +
 
 ## 14. Harlan County tells the coal story
 
-Harlan County had about 4,100 students in 2020. The county symbolizes the decline of coal country in eastern Kentucky.
+Harlan County dropped from 4,096 students in 2020 to 3,674 in 2024, a 10% decline in just five years. The county symbolizes the contraction of coal country in eastern Kentucky.
 
 ```{r story-14}
-fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
+s14 <- fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
   filter(grepl("Harlan County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
+stopifnot(nrow(s14) > 0)
+s14
 ```
 
 ```{r harlan-county}
 harlan <- enr %>%
   filter(is_district, grepl("Harlan County", district_name, ignore.case = TRUE),
          subgroup == "total_enrollment", grade_level == "TOTAL")
+stopifnot(nrow(harlan) > 0)
+
+print(harlan %>% select(end_year, n_students))
 
 ggplot(harlan, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = colors["black"]) +
   geom_point(size = 3, color = colors["black"]) +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Harlan County - The Coal Story",
-       subtitle = "Enrollment in decline with coal country",
+       subtitle = "10% enrollment decline in five years",
        x = "School Year", y = "Students") +
   theme_readme()
 ```
 
 ## 15. The multiracial population is growing
 
-Multiracial students now make up 5.4% of Kentucky's enrollment, up from 4.3% in 2020.
+Multiracial students now make up 5.3% of Kentucky's enrollment, up from 4.4% in 2020.
 
 ```{r story-15}
-enr %>%
+s15 <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "multiracial") %>%
   select(end_year, n_students, pct)
+stopifnot(nrow(s15) > 0)
+s15
 ```
 
 ```{r multiracial-growth}
 multiracial <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "multiracial")
+stopifnot(nrow(multiracial) > 0)
+
+print(multiracial %>% select(end_year, n_students, pct))
 
 ggplot(multiracial, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.5, color = "#1ABC9C") +
   geom_point(size = 3, color = "#1ABC9C") +
+  geom_vline(xintercept = 2020.5, linetype = "dashed", color = "red", alpha = 0.5) +
   scale_y_continuous(labels = comma) +
   labs(title = "Multiracial Students in Kentucky",
-       subtitle = "5.4% of enrollment, up from 4.3% in 2020",
+       subtitle = "5.3% of enrollment, up from 4.4% in 2020",
        x = "School Year", y = "Students") +
   theme_readme()
 ```
