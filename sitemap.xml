@@ -11,12 +11,14 @@
 <url><loc>https://almartin82.github.io/kyschooldata/reference/cache_status.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/clear_cache.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/create_state_aggregate.html</loc></url>
+<url><loc>https://almartin82.github.io/kyschooldata/reference/dedup_district_rows.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/download_kde_csv.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/download_saar_data.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/download_saar_single_year.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/download_src_current.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/download_src_historical.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/enr_grade_aggs.html</loc></url>
+<url><loc>https://almartin82.github.io/kyschooldata/reference/extract_kde_state_agg.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/fetch_enr.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/fetch_enr_multi.html</loc></url>
 <url><loc>https://almartin82.github.io/kyschooldata/reference/get_available_years.html</loc></url>

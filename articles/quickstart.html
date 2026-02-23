@@ -152,27 +152,27 @@ processes enrollment data:</p>
 <span></span>
 <span><span class="co"># View the first few rows</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">enr_2024</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   end_year     type district_id school_id district_name</span></span>
-<span><span class="co">## 1     2024    State        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;</span></span>
-<span><span class="co">## 2     2024 District         999      &lt;NA&gt; All Districts</span></span>
-<span><span class="co">## 3     2024 District         001      &lt;NA&gt;  Adair County</span></span>
-<span><span class="co">## 4     2024   School         001       010  Adair County</span></span>
-<span><span class="co">## 5     2024   School         001       012  Adair County</span></span>
-<span><span class="co">## 6     2024   School         001       014  Adair County</span></span>
-<span><span class="co">##                  school_name grade_level         subgroup n_students pct</span></span>
-<span><span class="co">## 1                       &lt;NA&gt;       TOTAL total_enrollment    1397078   1</span></span>
-<span><span class="co">## 2                       &lt;NA&gt;       TOTAL total_enrollment     686224   1</span></span>
-<span><span class="co">## 3                       &lt;NA&gt;       TOTAL total_enrollment       3068   1</span></span>
-<span><span class="co">## 4   Adair County High School       TOTAL total_enrollment        847   1</span></span>
-<span><span class="co">## 5     Adair Learning Academy       TOTAL total_enrollment        263   1</span></span>
-<span><span class="co">## 6 Adair County Middle School       TOTAL total_enrollment        632   1</span></span>
-<span><span class="co">##   is_state is_district is_school aggregation_flag</span></span>
-<span><span class="co">## 1     TRUE       FALSE     FALSE            state</span></span>
-<span><span class="co">## 2    FALSE        TRUE     FALSE         district</span></span>
-<span><span class="co">## 3    FALSE        TRUE     FALSE         district</span></span>
-<span><span class="co">## 4    FALSE       FALSE      TRUE           campus</span></span>
-<span><span class="co">## 5    FALSE       FALSE      TRUE           campus</span></span>
-<span><span class="co">## 6    FALSE       FALSE      TRUE           campus</span></span></code></pre>
+<pre><code><span><span class="co">##   end_year     type district_id school_id    district_name school_name</span></span>
+<span><span class="co">## 1     2024    State        &lt;NA&gt;      &lt;NA&gt;             &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">## 2     2024 District         275      &lt;NA&gt; Jefferson County        &lt;NA&gt;</span></span>
+<span><span class="co">## 3     2024 District         165      &lt;NA&gt;   Fayette County        &lt;NA&gt;</span></span>
+<span><span class="co">## 4     2024 District         035      &lt;NA&gt;     Boone County        &lt;NA&gt;</span></span>
+<span><span class="co">## 5     2024 District         571      &lt;NA&gt;    Warren County        &lt;NA&gt;</span></span>
+<span><span class="co">## 6     2024 District         231      &lt;NA&gt;    Hardin County        &lt;NA&gt;</span></span>
+<span><span class="co">##   grade_level         subgroup n_students pct is_state is_district is_school</span></span>
+<span><span class="co">## 1       TOTAL total_enrollment     686224   1     TRUE       FALSE     FALSE</span></span>
+<span><span class="co">## 2       TOTAL total_enrollment     103459   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">## 3       TOTAL total_enrollment      44362   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">## 4       TOTAL total_enrollment      21583   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">## 5       TOTAL total_enrollment      20394   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">## 6       TOTAL total_enrollment      16287   1    FALSE        TRUE     FALSE</span></span>
+<span><span class="co">##   aggregation_flag</span></span>
+<span><span class="co">## 1            state</span></span>
+<span><span class="co">## 2         district</span></span>
+<span><span class="co">## 3         district</span></span>
+<span><span class="co">## 4         district</span></span>
+<span><span class="co">## 5         district</span></span>
+<span><span class="co">## 6         district</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="understanding-the-year-parameter">Understanding the Year Parameter<a class="anchor" aria-label="anchor" href="#understanding-the-year-parameter"></a>
@@ -203,28 +203,28 @@ entity, grade level, and subgroup combination.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">district_id</span>, <span class="va">school_id</span>, <span class="va">district_name</span>,</span>
 <span>         <span class="va">type</span>, <span class="va">grade_level</span>, <span class="va">subgroup</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##    end_year district_id school_id district_name     type grade_level</span></span>
-<span><span class="co">## 1      2024        &lt;NA&gt;      &lt;NA&gt;          &lt;NA&gt;    State       TOTAL</span></span>
-<span><span class="co">## 2      2024         999      &lt;NA&gt; All Districts District       TOTAL</span></span>
-<span><span class="co">## 3      2024         001      &lt;NA&gt;  Adair County District       TOTAL</span></span>
-<span><span class="co">## 4      2024         001       010  Adair County   School       TOTAL</span></span>
-<span><span class="co">## 5      2024         001       012  Adair County   School       TOTAL</span></span>
-<span><span class="co">## 6      2024         001       014  Adair County   School       TOTAL</span></span>
-<span><span class="co">## 7      2024         001       016  Adair County   School       TOTAL</span></span>
-<span><span class="co">## 8      2024         001       020  Adair County   School       TOTAL</span></span>
-<span><span class="co">## 9      2024         005      &lt;NA&gt;  Allen County District       TOTAL</span></span>
-<span><span class="co">## 10     2024         005       010  Allen County   School       TOTAL</span></span>
+<pre><code><span><span class="co">##    end_year district_id school_id    district_name     type grade_level</span></span>
+<span><span class="co">## 1      2024        &lt;NA&gt;      &lt;NA&gt;             &lt;NA&gt;    State       TOTAL</span></span>
+<span><span class="co">## 2      2024         275      &lt;NA&gt; Jefferson County District       TOTAL</span></span>
+<span><span class="co">## 3      2024         165      &lt;NA&gt;   Fayette County District       TOTAL</span></span>
+<span><span class="co">## 4      2024         035      &lt;NA&gt;     Boone County District       TOTAL</span></span>
+<span><span class="co">## 5      2024         571      &lt;NA&gt;    Warren County District       TOTAL</span></span>
+<span><span class="co">## 6      2024         231      &lt;NA&gt;    Hardin County District       TOTAL</span></span>
+<span><span class="co">## 7      2024         291      &lt;NA&gt;    Kenton County District       TOTAL</span></span>
+<span><span class="co">## 8      2024         071      &lt;NA&gt;   Bullitt County District       TOTAL</span></span>
+<span><span class="co">## 9      2024         465      &lt;NA&gt;    Oldham County District       TOTAL</span></span>
+<span><span class="co">## 10     2024         145      &lt;NA&gt;   Daviess County District       TOTAL</span></span>
 <span><span class="co">##            subgroup n_students pct</span></span>
-<span><span class="co">## 1  total_enrollment    1397078   1</span></span>
-<span><span class="co">## 2  total_enrollment     686224   1</span></span>
-<span><span class="co">## 3  total_enrollment       3068   1</span></span>
-<span><span class="co">## 4  total_enrollment        847   1</span></span>
-<span><span class="co">## 5  total_enrollment        263   1</span></span>
-<span><span class="co">## 6  total_enrollment        632   1</span></span>
-<span><span class="co">## 7  total_enrollment        605   1</span></span>
-<span><span class="co">## 8  total_enrollment        722   1</span></span>
-<span><span class="co">## 9  total_enrollment       3336   1</span></span>
-<span><span class="co">## 10 total_enrollment       1083   1</span></span></code></pre>
+<span><span class="co">## 1  total_enrollment     686224   1</span></span>
+<span><span class="co">## 2  total_enrollment     103459   1</span></span>
+<span><span class="co">## 3  total_enrollment      44362   1</span></span>
+<span><span class="co">## 4  total_enrollment      21583   1</span></span>
+<span><span class="co">## 5  total_enrollment      20394   1</span></span>
+<span><span class="co">## 6  total_enrollment      16287   1</span></span>
+<span><span class="co">## 7  total_enrollment      14645   1</span></span>
+<span><span class="co">## 8  total_enrollment      13674   1</span></span>
+<span><span class="co">## 9  total_enrollment      12546   1</span></span>
+<span><span class="co">## 10 total_enrollment      12011   1</span></span></code></pre>
 <table class="table">
 <thead><tr class="header">
 <th>Column</th>
@@ -387,7 +387,7 @@ code)</li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   end_year n_students</span></span>
-<span><span class="co">## 1     2024    1397078</span></span></code></pre>
+<span><span class="co">## 1     2024     686224</span></span></code></pre>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Top 10 districts by enrollment</span></span>
 <span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -396,16 +396,16 @@ code)</li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##       district_name n_students</span></span>
-<span><span class="co">## 1     All Districts     686224</span></span>
-<span><span class="co">## 2  Jefferson County     103459</span></span>
-<span><span class="co">## 3    Fayette County      44362</span></span>
-<span><span class="co">## 4      Boone County      21583</span></span>
-<span><span class="co">## 5     Warren County      20394</span></span>
-<span><span class="co">## 6     Hardin County      16287</span></span>
-<span><span class="co">## 7     Kenton County      14645</span></span>
-<span><span class="co">## 8    Bullitt County      13674</span></span>
-<span><span class="co">## 9     Oldham County      12546</span></span>
-<span><span class="co">## 10   Daviess County      12011</span></span></code></pre>
+<span><span class="co">## 1  Jefferson County     103459</span></span>
+<span><span class="co">## 2    Fayette County      44362</span></span>
+<span><span class="co">## 3      Boone County      21583</span></span>
+<span><span class="co">## 4     Warren County      20394</span></span>
+<span><span class="co">## 5     Hardin County      16287</span></span>
+<span><span class="co">## 6     Kenton County      14645</span></span>
+<span><span class="co">## 7    Bullitt County      13674</span></span>
+<span><span class="co">## 8     Oldham County      12546</span></span>
+<span><span class="co">## 9    Daviess County      12011</span></span>
+<span><span class="co">## 10   Madison County      12007</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Demographics for state</span></span>
 <span><span class="va">enr_2024</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -413,10 +413,10 @@ code)</li>
 <span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"black"</span>, <span class="st">"hispanic"</span>, <span class="st">"asian"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subgroup</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   subgroup n_students        pct</span></span>
-<span><span class="co">## 1    white     994258 0.71166964</span></span>
-<span><span class="co">## 2    black     152218 0.10895455</span></span>
-<span><span class="co">## 3 hispanic     141735 0.10145103</span></span>
-<span><span class="co">## 4    asian      29203 0.02090291</span></span></code></pre>
+<span><span class="co">## 1    white     488062 0.71122840</span></span>
+<span><span class="co">## 2    black      74804 0.10900814</span></span>
+<span><span class="co">## 3 hispanic      69877 0.10182827</span></span>
+<span><span class="co">## 4    asian      14529 0.02117239</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -434,11 +434,11 @@ code)</li>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   end_year n_students</span></span>
-<span><span class="co">## 1     2020    1472317</span></span>
-<span><span class="co">## 2     2021    1434970</span></span>
-<span><span class="co">## 3     2022    1451381</span></span>
-<span><span class="co">## 4     2023    1456127</span></span>
-<span><span class="co">## 5     2024    1397078</span></span></code></pre>
+<span><span class="co">## 1     2020     698388</span></span>
+<span><span class="co">## 2     2021     682953</span></span>
+<span><span class="co">## 3     2022     685401</span></span>
+<span><span class="co">## 4     2023     687294</span></span>
+<span><span class="co">## 5     2024     686224</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="historical-analysis">Historical Analysis<a class="anchor" aria-label="anchor" href="#historical-analysis"></a>
@@ -507,21 +507,22 @@ detailed documentation</li>
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] ggplot2_4.0.2      dplyr_1.2.0        kyschooldata_0.1.0</span></span>
+<span><span class="co">## [1] ggplot2_4.0.2      dplyr_1.2.0        kyschooldata_0.1.0 testthat_3.3.2    </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.2     tidyselect_1.2.1  </span></span>
-<span><span class="co">##  [5] jquerylib_0.1.4    systemfonts_1.3.1  scales_1.4.0       textshaping_1.0.4 </span></span>
-<span><span class="co">##  [9] readxl_1.4.5       yaml_2.3.12        fastmap_1.2.0      R6_2.6.1          </span></span>
-<span><span class="co">## [13] labeling_0.4.3     generics_0.1.4     curl_7.0.0         knitr_1.51        </span></span>
-<span><span class="co">## [17] tibble_3.3.1       desc_1.4.3         bslib_0.10.0       pillar_1.11.1     </span></span>
-<span><span class="co">## [21] RColorBrewer_1.1-3 rlang_1.1.7        cachem_1.1.0       xfun_0.56         </span></span>
-<span><span class="co">## [25] fs_1.6.6           sass_0.4.10        S7_0.2.1           cli_3.6.5         </span></span>
-<span><span class="co">## [29] pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.4     digest_0.6.39     </span></span>
-<span><span class="co">## [33] grid_4.5.2         rappdirs_0.3.4     lifecycle_1.0.5    vctrs_0.7.1       </span></span>
-<span><span class="co">## [37] evaluate_1.0.5     glue_1.8.0         cellranger_1.1.0   farver_2.1.2      </span></span>
-<span><span class="co">## [41] codetools_0.2-20   ragg_1.5.0         httr_1.4.8         purrr_1.2.1       </span></span>
-<span><span class="co">## [45] rmarkdown_2.30     tools_4.5.2        pkgconfig_2.0.3    htmltools_0.5.9</span></span></code></pre>
+<span><span class="co">##  [1] gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.2     brio_1.1.5        </span></span>
+<span><span class="co">##  [5] tidyselect_1.2.1   jquerylib_0.1.4    systemfonts_1.3.1  scales_1.4.0      </span></span>
+<span><span class="co">##  [9] textshaping_1.0.4  readxl_1.4.5       yaml_2.3.12        fastmap_1.2.0     </span></span>
+<span><span class="co">## [13] R6_2.6.1           labeling_0.4.3     generics_0.1.4     curl_7.0.0        </span></span>
+<span><span class="co">## [17] knitr_1.51         tibble_3.3.1       desc_1.4.3         bslib_0.10.0      </span></span>
+<span><span class="co">## [21] pillar_1.11.1      RColorBrewer_1.1-3 rlang_1.1.7        cachem_1.1.0      </span></span>
+<span><span class="co">## [25] xfun_0.56          fs_1.6.6           sass_0.4.10        S7_0.2.1          </span></span>
+<span><span class="co">## [29] cli_3.6.5          pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.4    </span></span>
+<span><span class="co">## [33] digest_0.6.39      grid_4.5.2         rappdirs_0.3.4     lifecycle_1.0.5   </span></span>
+<span><span class="co">## [37] vctrs_0.7.1        evaluate_1.0.5     glue_1.8.0         cellranger_1.1.0  </span></span>
+<span><span class="co">## [41] farver_2.1.2       codetools_0.2-20   ragg_1.5.0         httr_1.4.8        </span></span>
+<span><span class="co">## [45] purrr_1.2.1        rmarkdown_2.30     tools_4.5.2        pkgconfig_2.0.3   </span></span>
+<span><span class="co">## [49] htmltools_0.5.9</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

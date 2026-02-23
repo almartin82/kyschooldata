@@ -64,27 +64,27 @@ enr_2024 <- fetch_enr(2024, use_cache = TRUE)
 head(enr_2024)
 ```
 
-    ##   end_year     type district_id school_id district_name
-    ## 1     2024    State        <NA>      <NA>          <NA>
-    ## 2     2024 District         999      <NA> All Districts
-    ## 3     2024 District         001      <NA>  Adair County
-    ## 4     2024   School         001       010  Adair County
-    ## 5     2024   School         001       012  Adair County
-    ## 6     2024   School         001       014  Adair County
-    ##                  school_name grade_level         subgroup n_students pct
-    ## 1                       <NA>       TOTAL total_enrollment    1397078   1
-    ## 2                       <NA>       TOTAL total_enrollment     686224   1
-    ## 3                       <NA>       TOTAL total_enrollment       3068   1
-    ## 4   Adair County High School       TOTAL total_enrollment        847   1
-    ## 5     Adair Learning Academy       TOTAL total_enrollment        263   1
-    ## 6 Adair County Middle School       TOTAL total_enrollment        632   1
-    ##   is_state is_district is_school aggregation_flag
-    ## 1     TRUE       FALSE     FALSE            state
-    ## 2    FALSE        TRUE     FALSE         district
-    ## 3    FALSE        TRUE     FALSE         district
-    ## 4    FALSE       FALSE      TRUE           campus
-    ## 5    FALSE       FALSE      TRUE           campus
-    ## 6    FALSE       FALSE      TRUE           campus
+    ##   end_year     type district_id school_id    district_name school_name
+    ## 1     2024    State        <NA>      <NA>             <NA>        <NA>
+    ## 2     2024 District         275      <NA> Jefferson County        <NA>
+    ## 3     2024 District         165      <NA>   Fayette County        <NA>
+    ## 4     2024 District         035      <NA>     Boone County        <NA>
+    ## 5     2024 District         571      <NA>    Warren County        <NA>
+    ## 6     2024 District         231      <NA>    Hardin County        <NA>
+    ##   grade_level         subgroup n_students pct is_state is_district is_school
+    ## 1       TOTAL total_enrollment     686224   1     TRUE       FALSE     FALSE
+    ## 2       TOTAL total_enrollment     103459   1    FALSE        TRUE     FALSE
+    ## 3       TOTAL total_enrollment      44362   1    FALSE        TRUE     FALSE
+    ## 4       TOTAL total_enrollment      21583   1    FALSE        TRUE     FALSE
+    ## 5       TOTAL total_enrollment      20394   1    FALSE        TRUE     FALSE
+    ## 6       TOTAL total_enrollment      16287   1    FALSE        TRUE     FALSE
+    ##   aggregation_flag
+    ## 1            state
+    ## 2         district
+    ## 3         district
+    ## 4         district
+    ## 5         district
+    ## 6         district
 
 ### Understanding the Year Parameter
 
@@ -111,28 +111,28 @@ enr_2024 %>%
   head(10)
 ```
 
-    ##    end_year district_id school_id district_name     type grade_level
-    ## 1      2024        <NA>      <NA>          <NA>    State       TOTAL
-    ## 2      2024         999      <NA> All Districts District       TOTAL
-    ## 3      2024         001      <NA>  Adair County District       TOTAL
-    ## 4      2024         001       010  Adair County   School       TOTAL
-    ## 5      2024         001       012  Adair County   School       TOTAL
-    ## 6      2024         001       014  Adair County   School       TOTAL
-    ## 7      2024         001       016  Adair County   School       TOTAL
-    ## 8      2024         001       020  Adair County   School       TOTAL
-    ## 9      2024         005      <NA>  Allen County District       TOTAL
-    ## 10     2024         005       010  Allen County   School       TOTAL
+    ##    end_year district_id school_id    district_name     type grade_level
+    ## 1      2024        <NA>      <NA>             <NA>    State       TOTAL
+    ## 2      2024         275      <NA> Jefferson County District       TOTAL
+    ## 3      2024         165      <NA>   Fayette County District       TOTAL
+    ## 4      2024         035      <NA>     Boone County District       TOTAL
+    ## 5      2024         571      <NA>    Warren County District       TOTAL
+    ## 6      2024         231      <NA>    Hardin County District       TOTAL
+    ## 7      2024         291      <NA>    Kenton County District       TOTAL
+    ## 8      2024         071      <NA>   Bullitt County District       TOTAL
+    ## 9      2024         465      <NA>    Oldham County District       TOTAL
+    ## 10     2024         145      <NA>   Daviess County District       TOTAL
     ##            subgroup n_students pct
-    ## 1  total_enrollment    1397078   1
-    ## 2  total_enrollment     686224   1
-    ## 3  total_enrollment       3068   1
-    ## 4  total_enrollment        847   1
-    ## 5  total_enrollment        263   1
-    ## 6  total_enrollment        632   1
-    ## 7  total_enrollment        605   1
-    ## 8  total_enrollment        722   1
-    ## 9  total_enrollment       3336   1
-    ## 10 total_enrollment       1083   1
+    ## 1  total_enrollment     686224   1
+    ## 2  total_enrollment     103459   1
+    ## 3  total_enrollment      44362   1
+    ## 4  total_enrollment      21583   1
+    ## 5  total_enrollment      20394   1
+    ## 6  total_enrollment      16287   1
+    ## 7  total_enrollment      14645   1
+    ## 8  total_enrollment      13674   1
+    ## 9  total_enrollment      12546   1
+    ## 10 total_enrollment      12011   1
 
 | Column          | Description                                 |
 |-----------------|---------------------------------------------|
@@ -225,7 +225,7 @@ enr_2024 %>%
 ```
 
     ##   end_year n_students
-    ## 1     2024    1397078
+    ## 1     2024     686224
 
 ``` r
 # Top 10 districts by enrollment
@@ -237,16 +237,16 @@ enr_2024 %>%
 ```
 
     ##       district_name n_students
-    ## 1     All Districts     686224
-    ## 2  Jefferson County     103459
-    ## 3    Fayette County      44362
-    ## 4      Boone County      21583
-    ## 5     Warren County      20394
-    ## 6     Hardin County      16287
-    ## 7     Kenton County      14645
-    ## 8    Bullitt County      13674
-    ## 9     Oldham County      12546
-    ## 10   Daviess County      12011
+    ## 1  Jefferson County     103459
+    ## 2    Fayette County      44362
+    ## 3      Boone County      21583
+    ## 4     Warren County      20394
+    ## 5     Hardin County      16287
+    ## 6     Kenton County      14645
+    ## 7    Bullitt County      13674
+    ## 8     Oldham County      12546
+    ## 9    Daviess County      12011
+    ## 10   Madison County      12007
 
 ``` r
 # Demographics for state
@@ -257,10 +257,10 @@ enr_2024 %>%
 ```
 
     ##   subgroup n_students        pct
-    ## 1    white     994258 0.71166964
-    ## 2    black     152218 0.10895455
-    ## 3 hispanic     141735 0.10145103
-    ## 4    asian      29203 0.02090291
+    ## 1    white     488062 0.71122840
+    ## 2    black      74804 0.10900814
+    ## 3 hispanic      69877 0.10182827
+    ## 4    asian      14529 0.02117239
 
 ## Multi-Year Analysis
 
@@ -277,11 +277,11 @@ enr_recent %>%
 ```
 
     ##   end_year n_students
-    ## 1     2020    1472317
-    ## 2     2021    1434970
-    ## 3     2022    1451381
-    ## 4     2023    1456127
-    ## 5     2024    1397078
+    ## 1     2020     698388
+    ## 2     2021     682953
+    ## 3     2022     685401
+    ## 4     2023     687294
+    ## 5     2024     686224
 
 ### Historical Analysis
 
@@ -355,18 +355,19 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] ggplot2_4.0.2      dplyr_1.2.0        kyschooldata_0.1.0
+    ## [1] ggplot2_4.0.2      dplyr_1.2.0        kyschooldata_0.1.0 testthat_3.3.2    
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.2     tidyselect_1.2.1  
-    ##  [5] jquerylib_0.1.4    systemfonts_1.3.1  scales_1.4.0       textshaping_1.0.4 
-    ##  [9] readxl_1.4.5       yaml_2.3.12        fastmap_1.2.0      R6_2.6.1          
-    ## [13] labeling_0.4.3     generics_0.1.4     curl_7.0.0         knitr_1.51        
-    ## [17] tibble_3.3.1       desc_1.4.3         bslib_0.10.0       pillar_1.11.1     
-    ## [21] RColorBrewer_1.1-3 rlang_1.1.7        cachem_1.1.0       xfun_0.56         
-    ## [25] fs_1.6.6           sass_0.4.10        S7_0.2.1           cli_3.6.5         
-    ## [29] pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.4     digest_0.6.39     
-    ## [33] grid_4.5.2         rappdirs_0.3.4     lifecycle_1.0.5    vctrs_0.7.1       
-    ## [37] evaluate_1.0.5     glue_1.8.0         cellranger_1.1.0   farver_2.1.2      
-    ## [41] codetools_0.2-20   ragg_1.5.0         httr_1.4.8         purrr_1.2.1       
-    ## [45] rmarkdown_2.30     tools_4.5.2        pkgconfig_2.0.3    htmltools_0.5.9
+    ##  [1] gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.2     brio_1.1.5        
+    ##  [5] tidyselect_1.2.1   jquerylib_0.1.4    systemfonts_1.3.1  scales_1.4.0      
+    ##  [9] textshaping_1.0.4  readxl_1.4.5       yaml_2.3.12        fastmap_1.2.0     
+    ## [13] R6_2.6.1           labeling_0.4.3     generics_0.1.4     curl_7.0.0        
+    ## [17] knitr_1.51         tibble_3.3.1       desc_1.4.3         bslib_0.10.0      
+    ## [21] pillar_1.11.1      RColorBrewer_1.1-3 rlang_1.1.7        cachem_1.1.0      
+    ## [25] xfun_0.56          fs_1.6.6           sass_0.4.10        S7_0.2.1          
+    ## [29] cli_3.6.5          pkgdown_2.2.0      withr_3.0.2        magrittr_2.0.4    
+    ## [33] digest_0.6.39      grid_4.5.2         rappdirs_0.3.4     lifecycle_1.0.5   
+    ## [37] vctrs_0.7.1        evaluate_1.0.5     glue_1.8.0         cellranger_1.1.0  
+    ## [41] farver_2.1.2       codetools_0.2-20   ragg_1.5.0         httr_1.4.8        
+    ## [45] purrr_1.2.1        rmarkdown_2.30     tools_4.5.2        pkgconfig_2.0.3   
+    ## [49] htmltools_0.5.9
