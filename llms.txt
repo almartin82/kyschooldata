@@ -38,7 +38,7 @@ five districts combined.
 library(kyschooldata)
 library(dplyr)
 
-enr_2024 <- fetch_enr(2024, use_cache = TRUE)
+enr_2024 <- fetch_enr(2024)
 
 s1 <- enr_2024 %>%
   filter(is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
@@ -74,7 +74,7 @@ modest 1.7% decline over five years. Despite COVID disruptions,
 enrollment has been remarkably stable.
 
 ``` r
-enr <- fetch_enr_multi(2020:2024, use_cache = TRUE)
+enr <- fetch_enr_multi(2020:2024)
 
 s2 <- enr %>%
   filter(is_state, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
@@ -105,16 +105,7 @@ students in 2020, dropping to about 20,200 by 2024.
 ``` r
 appalachian <- c("Pike County", "Floyd County", "Letcher County", "Perry County")
 
-s3 <- tryCatch(
-  fetch_enr_multi(2020:2024, use_cache = TRUE),
-  error = function(e) {
-    warning("Failed to fetch coal county data: ", e$message)
-    NULL
-  }
-)
-stopifnot(!is.null(s3))
-
-s3 <- s3 %>%
+s3 <- fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
   filter(grepl(paste(appalachian, collapse = "|"), district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, district_name, n_students)
@@ -453,16 +444,7 @@ Harlan County dropped from 4,096 students in 2020 to 3,674 in 2024, a
 coal country in eastern Kentucky.
 
 ``` r
-s14 <- tryCatch(
-  fetch_enr_multi(2020:2024, use_cache = TRUE),
-  error = function(e) {
-    warning("Failed to fetch Harlan County data: ", e$message)
-    NULL
-  }
-)
-stopifnot(!is.null(s14))
-
-s14 <- s14 %>%
+s14 <- fetch_enr_multi(2020:2024, use_cache = TRUE) %>%
   filter(grepl("Harlan County", district_name, ignore.case = TRUE),
          is_district, grade_level == "TOTAL", subgroup == "total_enrollment") %>%
   select(end_year, n_students)
@@ -623,10 +605,10 @@ Kentucky uses a hierarchical ID system: - **District ID:** 3 digits
 ### Data Source
 
 All data comes directly from the Kentucky Department of Education
-(KDE): - **Current Data (2020+):** [KDE Historical SRC
-Datasets](https://www.education.ky.gov/Open-House/data/Pages/Historical-SRC-Datasets.aspx) -
-**Historical Data (1997-2019):** [KDE Historical SAAR
-Data](https://www.education.ky.gov/districts/enrol/Pages/Historical-SAAR-Data.aspx)
+(KDE): - **Current Data (2020+):** [Open House SRC
+Data](https://openhouse.education.ky.gov/) - **Historical Data:** [KDE
+Historical
+Datasets](https://www.education.ky.gov/Open-House/data/Pages/default.aspx)
 
 ### Reporting Period
 
