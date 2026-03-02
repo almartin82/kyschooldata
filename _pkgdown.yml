@@ -19,10 +19,11 @@ navbar:
 
 reference:
 - title: Fetch Data
-  desc: Functions for downloading enrollment data
+  desc: Functions for downloading enrollment and directory data
   contents:
   - fetch_enr
   - fetch_enr_multi
+  - fetch_directory
   - get_available_years
   - get_enrollment_urls
 
@@ -38,3 +39,4 @@ reference:
   contents:
   - cache_status
   - clear_cache
+  - clear_directory_cache

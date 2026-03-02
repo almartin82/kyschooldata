@@ -155,7 +155,7 @@ s3
 | **Enrollment** | 1997-2024 | `fetch_enr()` / `fetch_enr_multi()` | State, district, school. Race, gender, FRPL, SpEd, LEP |
 | Assessments | -- | -- | Not yet available |
 | Graduation | -- | -- | Not yet available |
-| Directory | -- | -- | Not yet available |
+| **Directory** | Current | `fetch_directory()` | District, school. Superintendent, principal, address, phone, grades |
 | Per-Pupil Spending | -- | -- | Not yet available |
 | Accountability | -- | -- | Not yet available |
 | Chronic Absence | -- | -- | Not yet available |
